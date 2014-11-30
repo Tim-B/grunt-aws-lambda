@@ -18,12 +18,10 @@ module.exports = function (grunt) {
     // Please see the Grunt documentation for more information regarding task
     // creation: http://gruntjs.com/creating-tasks
 
-    grunt.registerTask('lambda_upload', [], function (zip) {
+    grunt.registerTask('lambda_upload', [], function () {
 
-        if (zip === undefined) {
-            grunt.task.requires('lambda_package');
-            zip = grunt.config.get('lambda_deploy.latest_package');
-        }
+        grunt.task.requires('lambda_package');
+        var zip = grunt.config.get('lambda_deploy.latest_package');
 
         var options = this.options({
             function: 'lambda',

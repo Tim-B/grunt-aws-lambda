@@ -14,8 +14,6 @@ module.exports = function (grunt) {
     // Please see the Grunt documentation for more information regarding task
     // creation: http://gruntjs.com/creating-tasks
 
-    grunt.registerTask('lambda_deploy', [], function () {
-        grunt.task.run(['lambda_package', 'lambda_upload'])
-    });
+    grunt.registerTask('lambda_deploy', ['lambda_package', 'lambda_upload']);
 
 };

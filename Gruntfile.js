@@ -40,7 +40,7 @@ module.exports = function (grunt) {
             },
             custom_options: {
                 options: {
-
+                    event: 'foo'
                 },
                 files: {
                     'tmp/custom_options': ['test/fixtures/testing', 'test/fixtures/123']
@@ -52,7 +52,6 @@ module.exports = function (grunt) {
         nodeunit: {
             tests: ['test/*_test.js']
         }
-
     });
 
     // Actually load this plugin's task(s).

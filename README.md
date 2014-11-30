@@ -23,7 +23,7 @@ Once the plugin has been installed, it may be enabled inside your Gruntfile with
 grunt.loadNpmTasks('grunt-aws-lambda');
 ```
 
-## The "aws_lambda" task
+## grunt-aws-lambda tasks
 
 ### Overview
 
@@ -116,6 +116,87 @@ Message
 Hello World
 
 Done, without errors.
+```
+
+
+### lambda_package
+
+This task generates a lambda package including npm dependencies using the default npm install functionality, therefore
+ your dependencies must be included in the *bundledDependencies* section of your package.json to be included in the
+ produced package.
+
+In your project's Gruntfile, add a section named `lambda_package` to the data object passed into `grunt.initConfig()`.
+
+```js
+grunt.initConfig({
+  lambda_package: {
+    options: {
+      // Task-specific options go here.
+    }
+  },
+});
+```
+
+#### Options
+
+##### options.package_file
+Type: `String`
+Default value: `package.json`
+
+Name of your npm package.json file, this is used to obtain version information and project name to intelligently
+ name package files.
+
+##### options.dist_folder
+Type: `String`
+Default value: `dist`
+
+The folder where the complete zip files should be saved relative to the Gruntfile.
+
+#### Usage Examples
+
+##### Default Options
+In this example, the default options are used therefore if we have the following in our `Gruntfile.js`:
+
+```js
+grunt.initConfig({
+  lambda_package: {
+    options: {}
+  },
+});
+```
+And the following in `package.json`
+
+```json
+{
+    "name": "my-lambda-function",
+    "description": "An Example Lamda Function",
+    "version": "0.0.1",
+    "private": "true",
+    "dependencies": {
+        "jquery": "2.1.1"
+    },
+    "devDependencies": {
+        "grunt": "0.4.*",
+        "grunt-pack": "0.1.*",
+        "grunt-aws-lambda": "0.1.*"
+    },
+    "bundledDependencies": [
+        "jquery"
+    ]
+}
+```
+
+Then we run `grunt lambda_package`, we should see a new zip file in a new folder called `dist` called something like:
+
+'my-lambda-function_0-0-1_2014-10-30-18-29-4.zip'
+
+If you unzip that and look inside you should see something like:
+```
+index.js
+package.json
+node_modules/
+node_modules/jquery
+node_modules/jquery/... etc
 ```
 
 

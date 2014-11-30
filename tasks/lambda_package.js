@@ -24,7 +24,6 @@ module.exports = function (grunt) {
     grunt.registerTask('lambda_package', [], function () {
 
         var options = this.options({
-            'name': 'lambda',
             'package_file': 'package.json',
             'dist_folder': 'dist'
         });

@@ -45,15 +45,15 @@ npm packages which should be bundled with your lambda function must be included 
  `package.json`, for example:
 
 ```json
-[...]
+...
 "dependencies": {
     "jquery": "2.1.1"
 },
-[...]
+...
 "bundledDependencies": [
     "jquery"
 ]
-[...]
+...
 ```
 
 [Read More](#default-options-1)

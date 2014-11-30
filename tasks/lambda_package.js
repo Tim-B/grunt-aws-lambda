@@ -71,12 +71,14 @@ module.exports = function (grunt) {
                         );
 
                         rimraf(install_location, function () {
+                            grunt.config.set('lambda_deploy.latest_package',
+                                './' + options.dist_folder + '/' + archive_name + '.zip');
+
+                            grunt.log.writeln('Created package at ' + options.dist_folder + '/' + archive_name + '.zip')
                             done(true);
                         });
                     });
                 });
-
-
             })
         })
 

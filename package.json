@@ -30,7 +30,8 @@
         "temporary": "~0.0.8",
         "archiver": "~0.13.0",
         "mkdirp": "~0.5.0",
-        "rimraf": "~2.2.8"
+        "rimraf": "~2.2.8",
+        "aws-sdk": "~2.0.29"
     },
     "devDependencies": {
         "grunt-contrib-jshint": "^0.9.2",

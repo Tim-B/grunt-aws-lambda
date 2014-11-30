@@ -23,6 +23,48 @@ Once the plugin has been installed, it may be enabled inside your Gruntfile with
 grunt.loadNpmTasks('grunt-aws-lambda');
 ```
 
+## Gotchas
+
+### Add dist to your .npmignore
+
+This will save you from packaging previous packages in future ones.
+
+For example your `.npmignore` might look something like this:
+```
+event.json
+Gruntfile.js
+dist
+*.iml
+```
+
+[Read More](#default-options-1)
+
+### Include your dependencies in bundledDependencies
+
+npm packages which should be bundled with your lambda function must be included in the `bundledDependencies` of your
+ `package.json`, for example:
+
+```json
+[...]
+"dependencies": {
+    "jquery": "2.1.1"
+},
+[...]
+"bundledDependencies": [
+    "jquery"
+]
+[...]
+```
+
+[Read More](#default-options-1)
+
+
+## Specify AWS credentials in ~/.aws/credentials
+
+This will save you from accidentally committing AWS credentials.
+
+[Read More](#aws-credentials)
+
 ## grunt-aws-lambda tasks
 
 ### Overview
@@ -269,11 +311,11 @@ And now if you run `grunt lambda_deploy` your package shoudl be created and uplo
 The AWS SDK is configured to look for credentials in the environment, that is it will look in `~/.aws/credentials`.
 
 This file should look something like:
-'''
+```
 [default]
 aws_access_key_id = <YOUR_ACCESS_KEY_ID>
 aws_secret_access_key = <YOUR_SECRET_ACCESS_KEY>
-'''
+```
 
 For more information [read this documentation](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html).
 

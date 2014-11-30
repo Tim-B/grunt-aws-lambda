@@ -188,7 +188,7 @@ And the following in `package.json`
 
 Then we run `grunt lambda_package`, we should see a new zip file in a new folder called `dist` called something like:
 
-'my-lambda-function_0-0-1_2014-10-30-18-29-4.zip'
+`my-lambda-function_0-0-1_2014-10-30-18-29-4.zip`
 
 If you unzip that and look inside you should see something like:
 ```

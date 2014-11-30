@@ -210,6 +210,116 @@ dist
 *.iml
 ```
 
+### lambda_deploy
+
+The lambda_deploy task calls the `lambda_package` task then another task called 'lambda_upload'. Therefore configuration
+ values should be put under the `lambda_upload` section.
+
+In your project's Gruntfile, add a section named `lambda_upload` to the data object passed into `grunt.initConfig()`.
+
+```js
+grunt.initConfig({
+  lambda_upload: {
+    options: {
+      // Task-specific options go here.
+    }
+  },
+});
+```
+
+#### Options
+
+##### options.function
+Type: `String`
+Default value: `lambda`
+
+The name of your target Lambda function, ie. the name of the function in the AWS console.
+
+##### options.profile
+Type: `String`
+Default value: `null`
+
+If you wish to use a specific AWS credentials profile you can specify it here, otherwise it will use the environment default.
+
+##### options.region
+Type: `String`
+Default value: `us-east-1`
+
+Specify the AWS region, useful if you'd normally operate in a certain region (such as one where Lambda isn't yet available)
+ but wish to upload functions to another region.
+
+#### Usage Examples
+
+##### Default Options
+In this example, the default options are used therefore if we have the following in our `Gruntfile.js`:
+
+```js
+grunt.initConfig({
+  lambda_deploy: {
+    options: {}
+  },
+});
+```
+And now if you run `grunt lambda_deploy` your package shoudl be created and uploaded to the specified function.
+
+## Misc info
+
+### AWS credentials
+
+The AWS SDK is configured to look for credentials in the environment, that is it will look in `~/.aws/credentials`.
+
+This file should look something like:
+'''
+[default]
+aws_access_key_id = <YOUR_ACCESS_KEY_ID>
+aws_secret_access_key = <YOUR_SECRET_ACCESS_KEY>
+'''
+
+For more information [read this documentation](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html).
+
+### AWS permissions
+
+To run the deploy command the AWS credentials require permissions to access lambda including `lambda:UploadFunction` and
+ `iam:PassRole` for the role which is assigned to the function.
+
+It is recommended that the following two policies be applied to the user:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "Stmt1404366560000",
+      "Effect": "Allow",
+      "Action": [
+        "lambda:*"
+      ],
+      "Resource": [
+        "*"
+      ]
+    }
+  ]
+}
+```
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "Stmt1404366560000",
+      "Effect": "Allow",
+      "Action": [
+        "iam:PassRole"
+      ],
+      "Resource": [
+        "arn:aws:iam::<my_account_id>:role/<my_role_name>"
+      ]
+    }
+  ]
+}
+```
+
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 

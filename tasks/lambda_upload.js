@@ -26,7 +26,7 @@ module.exports = function (grunt) {
         }
 
         var options = this.options({
-            function: 'helloworld1',
+            function: 'lambda',
             profile: null,
             region: 'us-east-1'
         });
@@ -54,12 +54,11 @@ module.exports = function (grunt) {
                 Runtime: current.Runtime
             }
 
+            grunt.log.writeln('Uploading...');
             fs.readFile(zip, function (err, data) {
                 params['FunctionZip'] = data;
-                console.log(params)
                 lambda.uploadFunction(params, function (err, data) {
-                    console.log(err);
-                    console.log(data);
+                    grunt.log.writeln('Package deployed.');
                     done(true);
                 });
             });

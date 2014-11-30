@@ -122,7 +122,7 @@ Done, without errors.
 ### lambda_package
 
 This task generates a lambda package including npm dependencies using the default npm install functionality, therefore
- your dependencies must be included in the *bundledDependencies* section of your package.json to be included in the
+ your dependencies must be included in the **bundledDependencies** section of your package.json to be included in the
  produced package.
 
 In your project's Gruntfile, add a section named `lambda_package` to the data object passed into `grunt.initConfig()`.
@@ -199,6 +199,16 @@ node_modules/jquery
 node_modules/jquery/... etc
 ```
 
+Given that by default the dist folder is inside your function folder you can easily end up bundling previous packages
+ inside subsequent packages therefore it is **strongly advised that you add dist to your .npmignore**.
+
+For example your `.npmignore` might look something like this:
+```
+event.json
+Gruntfile.js
+dist
+*.iml
+```
 
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).

@@ -1,0 +1,12 @@
+{
+    "name": "my-lambda-function",
+    "description": "An Example Lamda Function",
+    "version": "0.0.1",
+    "private": "true",
+    "dependencies": {
+    },
+    "devDependencies": {
+    },
+    "bundledDependencies": [
+    ]
+}

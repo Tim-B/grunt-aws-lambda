@@ -17,7 +17,7 @@ module.exports = function (grunt) {
     // Please see the Grunt documentation for more information regarding task
     // creation: http://gruntjs.com/creating-tasks
 
-    grunt.registerTask('lambda_invoke', [], function () {
+    grunt.registerMultiTask('lambda_invoke', 'Invokes a lambda function for testing purposes', function () {
 
         var options = this.options({
             'handler': 'handler',
@@ -25,19 +25,20 @@ module.exports = function (grunt) {
             'event': 'event.json'
         });
 
-        console.log("");
+        grunt.log.writeln("");
 
         var done = this.async();
+
         var context = {
             done: function (status, message) {
                 var success = status === null;
-                console.log("");
-                console.log("Message");
-                console.log("-------");
-                console.log(message);
-                done(success)
+                grunt.log.writeln("");
+                grunt.log.writeln("Message");
+                grunt.log.writeln("-------");
+                grunt.log.writeln(message);
+                done(success);
             }
-        }
+        };
 
         var lambda = require(path.resolve(options.file_name));
         var event = JSON.parse(fs.readFileSync(path.resolve(options.event), "utf8"));

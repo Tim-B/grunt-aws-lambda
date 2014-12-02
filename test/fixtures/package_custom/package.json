@@ -1,0 +1,14 @@
+{
+    "name": "another-lambda-function",
+    "description": "Another Example Lamda Function",
+    "version": "0.0.1",
+    "private": "true",
+    "dependencies": {
+        "jquery": "2.1.1"
+    },
+    "devDependencies": {
+    },
+    "bundledDependencies": [
+        "jquery"
+    ]
+}

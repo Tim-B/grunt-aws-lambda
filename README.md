@@ -83,11 +83,13 @@ In your project's Gruntfile, add a section named `lambda_invoke` to the data obj
 
 ```js
 grunt.initConfig({
-  lambda_invoke: {
-    options: {
-      // Task-specific options go here.
-    }
-  },
+    lambda_invoke: {
+        default: {
+            options: {
+                // Task-specific options go here.
+            }
+        }
+    },
 });
 ```
 
@@ -118,9 +120,13 @@ In this example, the default options are used therefore if we have the following
 
 ```js
 grunt.initConfig({
-  lambda_invoke: {
-    options: {}
-  },
+    lambda_invoke: {
+        default: {
+            options: {
+                // Task-specific options go here.
+            }
+        }
+    },
 });
 ```
 And the following in `index.js`
@@ -171,22 +177,30 @@ In your project's Gruntfile, add a section named `lambda_package` to the data ob
 
 ```js
 grunt.initConfig({
-  lambda_package: {
-    options: {
-      // Task-specific options go here.
-    }
-  },
+    lambda_package: {
+        default: {
+            options: {
+                // Task-specific options go here.
+            }
+        }
+    },
 });
 ```
 
 #### Options
 
-##### options.package_file
-Type: `String`
-Default value: `package.json`
+##### options.include_time
+Type: `Boolean`
+Default value: `true`
 
-Name of your npm package.json file, this is used to obtain version information and project name to intelligently
- name package files.
+Whether or not to timestamp the packages, if set to true the current date/time will be included in the zip name, if false
+ then the package name will be constant and consist of just the package name and version.
+
+##### options.package_folder
+Type: `String`
+Default value: `./`
+
+The path to your npm package, must contain the package.json file.
 
 ##### options.dist_folder
 Type: `String`
@@ -201,9 +215,13 @@ In this example, the default options are used therefore if we have the following
 
 ```js
 grunt.initConfig({
-  lambda_package: {
-    options: {}
-  },
+    lambda_package: {
+        default: {
+            options: {
+                // Task-specific options go here.
+            }
+        }
+    },
 });
 ```
 And the following in `package.json`
@@ -254,28 +272,59 @@ dist
 
 ### lambda_deploy
 
-The lambda_deploy task calls the `lambda_package` task then another task called 'lambda_upload'. Therefore configuration
- values should be put under the `lambda_upload` section.
-
-In your project's Gruntfile, add a section named `lambda_upload` to the data object passed into `grunt.initConfig()`.
+In your project's Gruntfile, add a section named `lambda_deploy` to the data object passed into `grunt.initConfig()`.
 
 ```js
 grunt.initConfig({
-  lambda_upload: {
-    options: {
-      // Task-specific options go here.
-    }
-  },
+    lambda_deploy: {
+        default: {
+            options: {
+                // Task-specific options go here.
+            },
+            function: 'my-lambda-function'
+        }
+    },
 });
 ```
 
 #### Options
 
-##### options.function
+##### function
 Type: `String`
-Default value: `lambda`
+Default value: None - Required
 
 The name of your target Lambda function, ie. the name of the function in the AWS console.
+
+##### package
+Type: `String`
+Default value: Package name set by package task of same target - see below.
+
+The name of the package to be uploaded.
+
+When the lambda_package task runs it sets the package value for the lambda_deploy target with the same name.
+
+Therefore if lambda_package and lambda_deploy have a target (eg. default) with the same name you will not
+ need to provide this value - it will be passed automatically.
+
+For example, your Gruntfile.js might contain the following:
+
+
+```js
+grunt.initConfig({
+    lambda_deploy: {
+        default: {
+            function: 'my-lambda-function'
+        }
+    },
+    lambda_package: {
+        default: {
+        }
+    }
+});
+```
+
+You could then run `grunt lambda_package lambda_deploy` and it'll automatically create the package and deploy it without
+ having to specify a package name.
 
 ##### options.profile
 Type: `String`
@@ -297,14 +346,29 @@ In this example, the default options are used therefore if we have the following
 
 ```js
 grunt.initConfig({
-  lambda_deploy: {
-    options: {}
-  },
+    lambda_upload: {
+        default: {
+            options: {
+                // Task-specific options go here.
+            }
+        }
+    },
 });
 ```
 And now if you run `grunt lambda_deploy` your package shoudl be created and uploaded to the specified function.
 
 ## Misc info
+
+### Streamlining deploy
+
+You can combine the lambda_package and lambda_deploy into a single deploy task by adding the following to your
+ Gruntfile.js:
+
+```js
+grunt.registerTask('deploy', ['lambda_package', 'lambda_deploy']);
+```
+
+You can then run `grunt deploy` to perform both these functions in one step.
 
 ### AWS credentials
 
@@ -367,3 +431,4 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 
 ## Release History
 * 0.1.0 - Initial release
+* 0.2.0 - Adding some unit tests, refactoring deploy task into single task and converting tasks to multitasks

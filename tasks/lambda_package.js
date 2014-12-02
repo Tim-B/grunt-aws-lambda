@@ -21,21 +21,27 @@ module.exports = function (grunt) {
     // Please see the Grunt documentation for more information regarding task
     // creation: http://gruntjs.com/creating-tasks
 
-    grunt.registerTask('lambda_package', [], function () {
+    grunt.registerMultiTask('lambda_package', 'Creates a package to be uploaded to lambda', function () {
+
+        var task = this;
 
         var options = this.options({
-            'package_file': 'package.json',
-            'dist_folder': 'dist'
+            'dist_folder': 'dist',
+            'include_time': true,
+            'package_folder': './'
         });
 
-        var pkg = grunt.file.readJSON(path.resolve(options.package_file));
+        var pkg = grunt.file.readJSON(path.resolve(options.package_folder + '/package.json'));
 
         var dir = new tmp.Dir();
         var done = this.async();
 
         var now = new Date();
-        var time_string = now.getFullYear() + '-' + now.getMonth() + '-' + now.getDate()
-            + '-' + now.getHours() + '-' + now.getMinutes() + '-' + now.getSeconds();
+        var time_string = 'latest';
+
+        if (options.include_time) {
+            time_string = now.getFullYear() + '-' + now.getMonth() + '-' + now.getDate() + '-' + now.getHours() + '-' + now.getMinutes() + '-' + now.getSeconds();
+        }
 
         var file_version = pkg.version.replace(/\./g, '-');
         var archive_name = pkg.name + '_' + file_version + '_' + time_string;
@@ -47,7 +53,7 @@ module.exports = function (grunt) {
 
             var install_location = dir.path;
 
-            npm.commands.install(install_location, "./", function () {
+            npm.commands.install(install_location, options.package_folder, function () {
 
                 var output = fs.createWriteStream(install_location + '/' + archive_name + '.zip');
                 var zipArchive = archive('zip');
@@ -70,16 +76,17 @@ module.exports = function (grunt) {
                         );
 
                         rimraf(install_location, function () {
-                            grunt.config.set('lambda_deploy.latest_package',
+
+                            grunt.config.set('lambda_deploy.' + task.target + '.package',
                                 './' + options.dist_folder + '/' + archive_name + '.zip');
 
-                            grunt.log.writeln('Created package at ' + options.dist_folder + '/' + archive_name + '.zip')
+                            grunt.log.writeln('Created package at ' + options.dist_folder + '/' + archive_name + '.zip');
                             done(true);
                         });
                     });
                 });
-            })
-        })
+            });
+        });
 
     });
 

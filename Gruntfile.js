@@ -29,25 +29,43 @@ module.exports = function (grunt) {
         },
 
         // Configuration to be run (and then tested).
-        lambda: {
+        lambda_invoke: {
             default_options: {
                 options: {
-
-                },
-                files: {
-                    'tmp/default_options': ['test/fixtures/testing', 'test/fixtures/123']
+                    file_name: 'test/fixtures/index.js',
+                    event: 'test/fixtures/event.json'
                 }
             },
             custom_options: {
                 options: {
-                    event: 'foo'
-                },
-                files: {
-                    'tmp/custom_options': ['test/fixtures/testing', 'test/fixtures/123']
+                    file_name: 'test/fixtures/custom_index.js',
+                    event: 'test/fixtures/custom_event.json',
+                    handler: 'myfunction'
                 }
             }
         },
-
+        lambda_package: {
+            default_options: {
+                options: {
+                    dist_folder: 'tmp/dist',
+                    package_folder: 'test/fixtures/package_default'
+                }
+            },
+            custom_options: {
+                options: {
+                    dist_folder: 'tmp/dist',
+                    include_time: false,
+                    package_folder: 'test/fixtures/package_custom'
+                }
+            }
+        },
+        lambda_deploy: {
+            default_options: {
+                options: {
+                },
+                function: 'lambda-test'
+            }
+        },
         // Unit tests.
         nodeunit: {
             tests: ['test/*_test.js']
@@ -64,9 +82,8 @@ module.exports = function (grunt) {
 
     // Whenever the "test" task is run, first clean the "tmp" dir, then run this
     // plugin's task(s), then test the result.
-    grunt.registerTask('test', ['clean', 'nodeunit']);
+    grunt.registerTask('test', ['clean', 'lambda_package', 'nodeunit']);
 
     // By default, lint and run all tests.
     grunt.registerTask('default', ['jshint', 'test']);
-
 };

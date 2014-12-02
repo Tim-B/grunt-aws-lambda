@@ -2,6 +2,8 @@
 
 > A grunt plugin to assist in developing functions for [AWS Lambda](http://aws.amazon.com/lambda/).
 
+[![Build Status](https://travis-ci.org/Tim-B/grunt-aws-lambda.svg)](https://travis-ci.org/Tim-B/grunt-aws-lambda)
+
 This plugin provides helpers for:
 * Running Lambda functions locally
 * Managing npm dependencies which are required by your function

@@ -346,13 +346,11 @@ In this example, the default options are used therefore if we have the following
 
 ```js
 grunt.initConfig({
-    lambda_upload: {
+    lambda_deploy: {
         default: {
-            options: {
-                // Task-specific options go here.
-            }
+            function: 'my-lambda-function'
         }
-    },
+    }
 });
 ```
 And now if you run `grunt lambda_deploy` your package shoudl be created and uploaded to the specified function.

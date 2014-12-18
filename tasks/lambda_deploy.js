@@ -44,6 +44,12 @@ module.exports = function (grunt) {
 
         lambda.getFunction({FunctionName: deploy_function}, function (err, data) {
 
+            if (data === null)
+            {
+                grunt.fail.warn('Unable to find lambda function ' + deploy_function + ' , verify the lambda function name and AWS region are correct');
+            }
+
+
             var current = data.Configuration;
 
             var params = {

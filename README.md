@@ -432,3 +432,4 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 ## Release History
 * 0.1.0 - Initial release
 * 0.2.0 - Adding some unit tests, refactoring deploy task into single task and converting tasks to multitasks
+* 0.3.0 - Adding more warnings for various failure cases

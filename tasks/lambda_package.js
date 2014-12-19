@@ -47,7 +47,7 @@ module.exports = function (grunt) {
         var archive_name = pkg.name + '_' + file_version + '_' + time_string;
 
 
-        npm.load([], function (er, npm) {
+        npm.load([], function (err, npm) {
 
             npm.config.set('loglevel', 'silent');
 

@@ -44,11 +44,13 @@ module.exports = function (grunt) {
 
         lambda.getFunction({FunctionName: deploy_function}, function (err, data) {
 
-            if (data === null)
-            {
-                grunt.fail.warn('Unable to find lambda function ' + deploy_function + ' , verify the lambda function name and AWS region are correct');
+            if (err) {
+                if(err.statusCode === 404) {
+                    grunt.fail.warn('Unable to find lambda function ' + deploy_function + ', verify the lambda function name and AWS region are correct.');
+                } else {
+                    grunt.fail.warn('AWS API request failed, check your AWS credentials and permissions are correct.');
+                }
             }
-
 
             var current = data.Configuration;
 
@@ -64,6 +66,9 @@ module.exports = function (grunt) {
             fs.readFile(deploy_package, function (err, data) {
                 params['FunctionZip'] = data;
                 lambda.uploadFunction(params, function (err, data) {
+                    if (err) {
+                        grunt.fail.warn('Package upload failed, check you have iam:PassRole permissions.');
+                    }
                     grunt.log.writeln('Package deployed.');
                     done(true);
                 });

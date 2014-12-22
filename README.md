@@ -341,6 +341,12 @@ Default value: `us-east-1`
 Specify the AWS region, useful if you'd normally operate in a certain region (such as one where Lambda isn't yet available)
  but wish to upload functions to another region.
 
+##### options.timeout
+Type: `Integer`
+Default value: `null`
+Depending on your Lambda function, you might need to increase the timeout value. The default timeout assigned by AWS is currently 3 seconds.
+ If you wish to increase this timeout set the value here.
+
 #### Usage Examples
 
 ##### Default Options
@@ -355,7 +361,23 @@ grunt.initConfig({
     }
 });
 ```
-And now if you run `grunt lambda_deploy` your package shoudl be created and uploaded to the specified function.
+And now if you run `grunt lambda_deploy` your package should be created and uploaded to the specified function.
+
+
+##### Increasing the Timeout Options to 10 seconds
+In this example, the timeout value is increased to 10 seconds.
+
+```js
+grunt.initConfig({
+    lambda_deploy: {
+        default: {
+            function: 'my-lambda-function',
+            timeout : 10
+
+        }
+    }
+});
+```
 
 ## Misc info
 

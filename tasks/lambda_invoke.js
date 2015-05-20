@@ -30,14 +30,31 @@ module.exports = function (grunt) {
         var done = this.async();
 
         var context = {
-            done: function (status, message) {
-                var success = status === null;
+            done: function (error, result) {
+                if (error === null) {
+                    this.succeed(result);
+                } else {
+                    this.fail(error);
+                }
+            },
+            succeed: function (result) {
                 grunt.log.writeln("");
-                grunt.log.writeln("Message");
-                grunt.log.writeln("-------");
-                grunt.log.writeln(message);
-                done(success);
-            }
+                grunt.log.writeln("Success!  Message:");
+                grunt.log.writeln("------------------");
+                grunt.log.writeln(result);
+                done(true);
+            },
+            fail: function (error) {
+                grunt.log.writeln("");
+                grunt.log.writeln("Failure!  Message:");
+                grunt.log.writeln("------------------");
+                grunt.log.writeln(error);
+                done(false);
+            },
+            awsRequestId: 'LAMBDA_INVOKE',
+            logStreamName: 'LAMBDA_INVOKE',
+            clientContext: null,
+            identity: null
         };
 
         var lambda = require(path.resolve(options.file_name));

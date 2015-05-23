@@ -60,7 +60,10 @@ module.exports = function (grunt) {
                 Handler: current.Handler,
                 Mode: current.Mode,
                 Role: current.Role,
-                Runtime: current.Runtime
+                Runtime: current.Runtime,
+                Description: current.Description,
+                MemorySize: current.MemorySize,
+                Timeout: current.Timeout
             };
 
             if (deploy_timeout !== null)

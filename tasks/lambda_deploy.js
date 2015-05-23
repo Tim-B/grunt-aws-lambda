@@ -70,6 +70,10 @@ module.exports = function (grunt) {
 
             grunt.log.writeln('Uploading...');
             fs.readFile(deploy_package, function (err, data) {
+                if (err) {
+                    grunt.fail.warn('Could not read package file ('+deploy_package+'), verify the lambda package '+
+                        'location is correct, and that you have already created the package using lambda_package.');
+                }
                 params['FunctionZip'] = data;
                 lambda.uploadFunction(params, function (err, data) {
                     if (err) {

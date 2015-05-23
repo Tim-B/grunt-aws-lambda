@@ -1,0 +1,12 @@
+Running "lambda_invoke:failure_options" (lambda_invoke) task
+
+value1 = value1
+value2 = value2
+value3 = value3
+
+Failure!  Message:
+------------------
+Hello World
+Warning: Task "lambda_invoke:failure_options" failed. Use --force to continue.
+
+Aborted due to warnings.

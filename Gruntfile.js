@@ -42,6 +42,13 @@ module.exports = function (grunt) {
                     event: 'test/fixtures/custom_event.json',
                     handler: 'myfunction'
                 }
+            },
+            failure_options: {
+                options: {
+                    file_name: 'test/fixtures/failing_index.js',
+                    event: 'test/fixtures/event.json',
+                    handler: 'myfunction'
+                }
             }
         },
         lambda_package: {

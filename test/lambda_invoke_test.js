@@ -58,5 +58,19 @@ exports.lambda_invoke = {
             test.equal(actual, expected);
             test.done();
         });
+    },
+    failure_options: function (test) {
+        test.expect(1);
+
+        grunt.util.spawn({
+            grunt: true,
+            args: ['lambda_invoke:failure_options', '--no-color']
+        }, function (err, result, code) {
+
+            var expected = getNormalizedFile('test/expected/failure_options');
+            var actual = grunt.util.normalizelf(result.stdout);
+            test.equal(actual, expected);
+            test.done();
+        });
     }
 };

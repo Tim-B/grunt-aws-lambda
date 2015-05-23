@@ -35,6 +35,7 @@ module.exports = function (grunt) {
 
         var deploy_function = grunt.config.get('lambda_deploy.' + this.target + '.function');
         var deploy_package = grunt.config.get('lambda_deploy.' + this.target + '.package');
+        var deploy_timeout = grunt.config.get('lambda_deploy.' + this.target + '.options.timeout');
 
         AWS.config.update({region: options.region});
 
@@ -61,6 +62,11 @@ module.exports = function (grunt) {
                 Role: current.Role,
                 Runtime: current.Runtime
             };
+
+            if (deploy_timeout !== null)
+            {
+                params.Timeout = deploy_timeout;
+            }
 
             grunt.log.writeln('Uploading...');
             fs.readFile(deploy_package, function (err, data) {

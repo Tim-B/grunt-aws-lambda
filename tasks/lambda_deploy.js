@@ -20,12 +20,13 @@ module.exports = function (grunt) {
 
     grunt.registerMultiTask('lambda_deploy', 'Uploads a package to lambda', function () {
 
-        grunt.config.requires('lambda_deploy.' + this.target + '.function');
         grunt.config.requires('lambda_deploy.' + this.target + '.package');
 
         var options = this.options({
             profile: null,
-            region: 'us-east-1'
+            region: 'us-east-1',
+            timeout: null,
+            memory: null
         });
 
         if (options.profile !== null) {
@@ -34,14 +35,23 @@ module.exports = function (grunt) {
         }
 
         var deploy_function = grunt.config.get('lambda_deploy.' + this.target + '.function');
+        var deploy_arn = grunt.config.get('lambda_deploy.' + this.target + '.arn');
         var deploy_package = grunt.config.get('lambda_deploy.' + this.target + '.package');
-        var deploy_timeout = grunt.config.get('lambda_deploy.' + this.target + '.options.timeout');
 
-        AWS.config.update({region: options.region});
+        if(deploy_arn === null && deploy_function === null) {
+            grunt.fail.warn('You must specify either an arn or a function name.');
+        }
+
+        if(deploy_arn !== null) {
+            deploy_function = deploy_arn;
+        }
 
         var done = this.async();
 
-        var lambda = new AWS.Lambda();
+        AWS.config.update({region: options.region});
+        var lambda = new AWS.Lambda({
+            apiVersion: '2015-03-31'
+        });
 
         lambda.getFunction({FunctionName: deploy_function}, function (err, data) {
 
@@ -54,21 +64,32 @@ module.exports = function (grunt) {
             }
 
             var current = data.Configuration;
+            var configParams = {};
 
-            var params = {
-                FunctionName: deploy_function,
-                Handler: current.Handler,
-                Mode: current.Mode,
-                Role: current.Role,
-                Runtime: current.Runtime,
-                Description: current.Description,
-                MemorySize: current.MemorySize,
-                Timeout: current.Timeout
-            };
 
-            if (deploy_timeout !== null)
-            {
-                params.Timeout = deploy_timeout;
+            if (options.timeout !== null) {
+                configParams.Timeout = options.timeout;
+            }
+
+            if (options.memory !== null) {
+                configParams.MemorySize = options.memory;
+            }
+
+            var updateConfig = function(func_name, func_options, callback) {
+                if(Object.keys(func_options).length > 0) {
+                    func_options.FunctionName = func_name;
+                    lambda.updateFunctionConfiguration(func_options, function(err, data) {
+                        if (err) {
+                            grunt.fail.warn('Could not update config, check that values and permissions are valid');
+                        }
+                        grunt.log.writeln('Config updated.');
+                        callback(data);
+                    });
+                } else {
+                    grunt.log.writeln('No config updates to make.');
+                    callback(false);
+                    return;
+                }
             }
 
             grunt.log.writeln('Uploading...');
@@ -77,13 +98,20 @@ module.exports = function (grunt) {
                     grunt.fail.warn('Could not read package file ('+deploy_package+'), verify the lambda package '+
                         'location is correct, and that you have already created the package using lambda_package.');
                 }
-                params['FunctionZip'] = data;
-                lambda.uploadFunction(params, function (err, data) {
+
+                var codeParams = {
+                    FunctionName: deploy_function,
+                    ZipFile: data
+                }
+
+                lambda.updateFunctionCode(codeParams, function (err, data) {
                     if (err) {
-                        grunt.fail.warn('Package upload failed, check you have iam:PassRole permissions.');
+                        grunt.fail.warn('Package upload failed, check you have lambda:UpdateFunctionCode permissions.');
                     }
                     grunt.log.writeln('Package deployed.');
-                    done(true);
+                    updateConfig(deploy_function, configParams, function(data){
+                        done(true);
+                    });
                 });
             });
         });

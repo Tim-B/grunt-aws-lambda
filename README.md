@@ -291,11 +291,18 @@ grunt.initConfig({
 
 #### Options
 
-##### function
+
+##### arn
 Type: `String`
 Default value: None - Required
 
-The name of your target Lambda function, ie. the name of the function in the AWS console.
+The ARN of your target Lambda function.
+
+##### function
+Type: `String`
+Default value: None - Required (if you havn't specified an ARN)
+
+*This option is deprecated, use arn instead*. The name of your target Lambda function, ie. the name of the function in the AWS console.
 
 ##### package
 Type: `String`
@@ -315,7 +322,7 @@ For example, your Gruntfile.js might contain the following:
 grunt.initConfig({
     lambda_deploy: {
         default: {
-            function: 'my-lambda-function'
+            arn: 'arn:aws:lambda:us-east-1:123456781234:function:my-function'
         }
     },
     lambda_package: {
@@ -334,18 +341,17 @@ Default value: `null`
 
 If you wish to use a specific AWS credentials profile you can specify it here, otherwise it will use the environment default.
 
-##### options.region
-Type: `String`
-Default value: `us-east-1`
-
-Specify the AWS region, useful if you'd normally operate in a certain region (such as one where Lambda isn't yet available)
- but wish to upload functions to another region.
-
 ##### options.timeout
 Type: `Integer`
 Default value: `null`
 Depending on your Lambda function, you might need to increase the timeout value. The default timeout assigned by AWS is currently 3 seconds.
  If you wish to increase this timeout set the value here.
+ 
+##### options.memory
+ Type: `Integer`
+ Default value: `null`
+ Sets the memory assigned to the function. If null then the current setting for the function will be used. Value is in
+ MB and must be a multiple of 64.
 
 #### Usage Examples
 
@@ -356,7 +362,7 @@ In this example, the default options are used therefore if we have the following
 grunt.initConfig({
     lambda_deploy: {
         default: {
-            function: 'my-lambda-function'
+            arn: 'arn:aws:lambda:us-east-1:123456781234:function:my-function'
         }
     }
 });
@@ -365,15 +371,17 @@ And now if you run `grunt lambda_deploy` your package should be created and uplo
 
 
 ##### Increasing the Timeout Options to 10 seconds
-In this example, the timeout value is increased to 10 seconds.
+In this example, the timeout value is increased to 10 seconds and set memory to 256mb.
 
 ```js
 grunt.initConfig({
     lambda_deploy: {
         default: {
-            function: 'my-lambda-function',
-            timeout : 10
-
+            arn: 'arn:aws:lambda:us-east-1:123456781234:function:my-function',
+            options: {
+                timeout : 10,
+                memory: 256            
+            }
         }
     }
 });
@@ -452,7 +460,19 @@ It is recommended that the following two policies be applied to the user:
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
-* 0.1.0 - Initial release
-* 0.2.0 - Adding some unit tests, refactoring deploy task into single task and converting tasks to multitasks
-* 0.3.0 - Adding more warnings for various failure cases
-* 0.4.0 - Many bug fixes and pull requests, 
+### 0.1.0
+Initial release
+
+### 0.2.0
+Adding some unit tests, refactoring deploy task into single task and converting tasks to multitasks
+
+### 0.3.0
+Adding more warnings for various failure cases
+
+### 0.4.0
+
+* Added support for succeed and fail functions - [pull request by jonyo](https://github.com/Tim-B/grunt-aws-lambda/pull/11) 
+* Added NPM to package.json - [pull request by jonyo](https://github.com/Tim-B/grunt-aws-lambda/pull/13), should address [issue 2](https://github.com/Tim-B/grunt-aws-lambda/issues/2#issuecomment-104805707)
+* Added timeout and memory options - [timeout pull request by aidancasey](https://github.com/Tim-B/grunt-aws-lambda/pull/3)
+* Bumped aws-sdk version
+* Bumped adm-zip version, will hopefully address [issue 4](https://github.com/Tim-B/grunt-aws-lambda/issues/4)

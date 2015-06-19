@@ -71,18 +71,20 @@ module.exports = function (grunt) {
 
                 output.on('close', function () {
                     mkdirp('./' + options.dist_folder, function (err) {
-                        fs.createReadStream(install_location + '/' + archive_name + '.zip').pipe(
-                            fs.createWriteStream('./' + options.dist_folder + '/' + archive_name + '.zip')
-                        );
+                        var srcZip = fs.createReadStream(install_location + '/' + archive_name + '.zip');
+                        var destZip = fs.createWriteStream('./' + options.dist_folder + '/' + archive_name + '.zip');
+                        
+                        destZip.on('finish', function () {
+                            rimraf(install_location, function () {
+                                grunt.config.set('lambda_deploy.' + task.target + '.package',
+                                    './' + options.dist_folder + '/' + archive_name + '.zip');
 
-                        rimraf(install_location, function () {
-
-                            grunt.config.set('lambda_deploy.' + task.target + '.package',
-                                './' + options.dist_folder + '/' + archive_name + '.zip');
-
-                            grunt.log.writeln('Created package at ' + options.dist_folder + '/' + archive_name + '.zip');
-                            done(true);
-                        });
+                                grunt.log.writeln('Created package at ' + options.dist_folder + '/' + archive_name + '.zip');
+                                done(true);
+                            }); 
+                        })
+                        
+                        srcZip.pipe(destZip);
                     });
                 });
             });

@@ -12,7 +12,6 @@ module.exports = function (grunt) {
 
     var path = require('path');
     var npm = require("npm");
-    var tmp = require('temporary');
     var archive = require('archiver');
     var fs = require('fs');
     var mkdirp = require('mkdirp');
@@ -33,7 +32,6 @@ module.exports = function (grunt) {
 
         var pkg = grunt.file.readJSON(path.resolve(options.package_folder + '/package.json'));
 
-        var dir = new tmp.Dir();
         var done = this.async();
 
         var now = new Date();
@@ -51,7 +49,7 @@ module.exports = function (grunt) {
 
             npm.config.set('loglevel', 'silent');
 
-            var install_location = dir.path;
+            var install_location = './.tmp';
 
             npm.commands.install(install_location, options.package_folder, function () {
 

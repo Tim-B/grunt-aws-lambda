@@ -485,3 +485,6 @@ Adding more warnings for various failure cases
 ### 0.6.0
 * Fixing a minor issue caused by some code that shouldn't have been commented out.
 
+### 0.7.0
+* Removing some unneeded files from the NPM package.
+

@@ -14,6 +14,7 @@ module.exports = function (grunt) {
     var npm = require("npm");
     var archive = require('archiver');
     var fs = require('fs');
+    var tmp = require('temporary');
     var mkdirp = require('mkdirp');
     var rimraf = require('rimraf');
 
@@ -32,13 +33,22 @@ module.exports = function (grunt) {
 
         var pkg = grunt.file.readJSON(path.resolve(options.package_folder + '/package.json'));
 
+        var dir = new tmp.Dir();
         var done = this.async();
 
         var now = new Date();
         var time_string = 'latest';
 
         if (options.include_time) {
-            time_string = now.getFullYear() + '-' + now.getMonth() + '-' + now.getDate() + '-' + now.getHours() + '-' + now.getMinutes() + '-' + now.getSeconds();
+            var time_components = [
+                now.getFullYear(),
+                now.getMonth(),
+                now.getDate(),
+                now.getHours(),
+                now.getMinutes(),
+                now.getSeconds()
+            ];
+            time_string =  time_components.join('-');
         }
 
         var file_version = pkg.version.replace(/\./g, '-');
@@ -49,11 +59,12 @@ module.exports = function (grunt) {
 
             npm.config.set('loglevel', 'silent');
 
-            var install_location = './.tmp';
+            var install_location = dir.path;
+            var zip_path = install_location + '/' + archive_name + '.zip';
 
             npm.commands.install(install_location, options.package_folder, function () {
 
-                var output = fs.createWriteStream(install_location + '/' + archive_name + '.zip');
+                var output = fs.createWriteStream(zip_path);
 
                 var zipArchive = archive('zip');
 
@@ -84,22 +95,17 @@ module.exports = function (grunt) {
 
                 output.on('close', function () {
                     mkdirp('./' + options.dist_folder, function (err) {
-                        var dist_zip = fs.createWriteStream('./' + options.dist_folder + '/' + archive_name + '.zip');
-                        fs.createReadStream(install_location + '/' + archive_name + '.zip').pipe(dist_zip);
+                        var dist_path = './' + options.dist_folder + '/' + archive_name + '.zip';
+                        var dist_zip = fs.createWriteStream(dist_path);
+                        fs.createReadStream(zip_path).pipe(dist_zip);
 
                         dist_zip.on('close', function () {
-
                             rimraf(install_location, function () {
-
-                                grunt.config.set('lambda_deploy.' + task.target + '.package',
-                                    './' + options.dist_folder + '/' + archive_name + '.zip');
-
-                                grunt.log.writeln('Created package at ' + options.dist_folder + '/' + archive_name + '.zip');
+                                grunt.config.set('lambda_deploy.' + task.target + '.package', dist_path);
+                                grunt.log.writeln('Created package at ' + dist_path);
                                 done(true);
                             });
-
                         });
-
                     });
                 });
             });

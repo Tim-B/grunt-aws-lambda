@@ -476,3 +476,8 @@ Adding more warnings for various failure cases
 * Added timeout and memory options - [timeout pull request by aidancasey](https://github.com/Tim-B/grunt-aws-lambda/pull/3)
 * Bumped aws-sdk version
 * Bumped adm-zip version, will hopefully address [issue 4](https://github.com/Tim-B/grunt-aws-lambda/issues/4)
+
+### 0.5.0
+* Fixed issue where dotfiles weren't packaged - [see issue 17](https://github.com/Tim-B/grunt-aws-lambda/issues/17) 
+* Fixed issue where task could be done before zip writing is finished - [pull request by qen](https://github.com/Tim-B/grunt-aws-lambda/pull/16) 
+

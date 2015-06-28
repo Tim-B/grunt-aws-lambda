@@ -60,6 +60,7 @@ module.exports = function (grunt) {
                 zipArchive.bulk([
                     {
                         src: ['./**'],
+                        dot:true,
                         expand: true,
                         cwd: install_location + '/node_modules/' + pkg.name
                     }
@@ -69,21 +70,19 @@ module.exports = function (grunt) {
 
                 output.on('close', function () {
                     mkdirp('./' + options.dist_folder, function (err) {
-
                         var dist_zip = fs.createWriteStream('./' + options.dist_folder + '/' + archive_name + '.zip');
-
                         fs.createReadStream(install_location + '/' + archive_name + '.zip').pipe(dist_zip);
 
                         dist_zip.on('close', function () {
 
-                          rimraf(install_location, function () {
+                            rimraf(install_location, function () {
 
-                              grunt.config.set('lambda_deploy.' + task.target + '.package',
-                                  './' + options.dist_folder + '/' + archive_name + '.zip');
+                                grunt.config.set('lambda_deploy.' + task.target + '.package',
+                                    './' + options.dist_folder + '/' + archive_name + '.zip');
 
-                              grunt.log.writeln('Created package at ' + options.dist_folder + '/' + archive_name + '.zip');
-                              done(true);
-                          });
+                                grunt.log.writeln('Created package at ' + options.dist_folder + '/' + archive_name + '.zip');
+                                done(true);
+                            });
 
                         });
 

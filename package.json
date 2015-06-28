@@ -1,7 +1,7 @@
 {
     "name": "grunt-aws-lambda",
     "description": "A grunt plugin to help develop AWS Lambda functions.",
-    "version": "0.4.0",
+    "version": "0.5.0",
     "homepage": "https://github.com/Tim-B/grunt-aws-lambda",
     "author": {
         "name": "Tim-B",

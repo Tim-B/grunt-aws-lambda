@@ -34,18 +34,19 @@ exports.lambda_package = {
         done();
     },
     default_options: function (test) {
-        test.expect(4);
+        test.expect(5);
         glob("my-lambda-function_0-0-1_*.zip", {cwd: 'tmp/dist'}, function (er, files) {
             test.equals(1, files.length);
 
             var zip = new AdmZip('tmp/dist/' + files[0]);
             var zipEntries = zip.getEntries();
 
-            test.equals(2, zipEntries.length);
+            test.equals(3, zipEntries.length);
 
             var required = [
                 'index.js',
-                'package.json'
+                'package.json',
+                '.test'
             ];
 
             zipEntries.forEach(function (item) {

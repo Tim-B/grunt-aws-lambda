@@ -12,7 +12,6 @@ module.exports = function (grunt) {
 
     var path = require('path');
     var npm = require("npm");
-    var tmp = require('temporary');
     var archive = require('archiver');
     var fs = require('fs');
     var mkdirp = require('mkdirp');
@@ -33,7 +32,6 @@ module.exports = function (grunt) {
 
         var pkg = grunt.file.readJSON(path.resolve(options.package_folder + '/package.json'));
 
-        var dir = new tmp.Dir();
         var done = this.async();
 
         var now = new Date();
@@ -51,7 +49,7 @@ module.exports = function (grunt) {
 
             npm.config.set('loglevel', 'silent');
 
-            var install_location = dir.path;
+            var install_location = './.tmp';
 
             npm.commands.install(install_location, options.package_folder, function () {
 
@@ -71,18 +69,24 @@ module.exports = function (grunt) {
 
                 output.on('close', function () {
                     mkdirp('./' + options.dist_folder, function (err) {
-                        fs.createReadStream(install_location + '/' + archive_name + '.zip').pipe(
-                            fs.createWriteStream('./' + options.dist_folder + '/' + archive_name + '.zip')
-                        );
 
-                        rimraf(install_location, function () {
+                        var dist_zip = fs.createWriteStream('./' + options.dist_folder + '/' + archive_name + '.zip');
 
-                            grunt.config.set('lambda_deploy.' + task.target + '.package',
-                                './' + options.dist_folder + '/' + archive_name + '.zip');
+                        fs.createReadStream(install_location + '/' + archive_name + '.zip').pipe(dist_zip);
 
-                            grunt.log.writeln('Created package at ' + options.dist_folder + '/' + archive_name + '.zip');
-                            done(true);
+                        dist_zip.on('close', function () {
+
+                          rimraf(install_location, function () {
+
+                              grunt.config.set('lambda_deploy.' + task.target + '.package',
+                                  './' + options.dist_folder + '/' + archive_name + '.zip');
+
+                              grunt.log.writeln('Created package at ' + options.dist_folder + '/' + archive_name + '.zip');
+                              done(true);
+                          });
+
                         });
+
                     });
                 });
             });

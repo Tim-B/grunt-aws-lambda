@@ -76,7 +76,7 @@ module.exports = function (grunt) {
                 var old_normalizeEntryData = zipArchive._normalizeEntryData;
                 zipArchive._normalizeEntryData = function(data, stats) {
                     // 0777 file permission
-                    // data.mode = 511;
+                    data.mode = 511;
                     return old_normalizeEntryData.apply(zipArchive, [data, stats]);
                 };
 

@@ -54,7 +54,21 @@ module.exports = function (grunt) {
             npm.commands.install(install_location, options.package_folder, function () {
 
                 var output = fs.createWriteStream(install_location + '/' + archive_name + '.zip');
+
                 var zipArchive = archive('zip');
+
+                /*
+                 * Monkey patch to ensure permissions are always 777
+                 * Prevents issues on Windows for directories that don't have execute permissions
+                 * See https://github.com/Tim-B/grunt-aws-lambda/issues/6
+                 */
+                var old_normalizeEntryData = zipArchive._normalizeEntryData;
+                zipArchive._normalizeEntryData = function(data, stats) {
+                    // 0777 file permission
+                    // data.mode = 511;
+                    return old_normalizeEntryData.apply(zipArchive, [data, stats]);
+                };
+
                 zipArchive.pipe(output);
 
                 zipArchive.bulk([

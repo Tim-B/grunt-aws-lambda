@@ -482,3 +482,6 @@ Adding more warnings for various failure cases
 * Fixed issue where task could be done before zip writing is finished - [pull request by qen](https://github.com/Tim-B/grunt-aws-lambda/pull/16) 
 * Monkey patched node-archiver to force permissions to be 777 for all files in package - [see issue 6](https://github.com/Tim-B/grunt-aws-lambda/issues/6)
 
+### 0.6.0
+* Fixing a minor issue caused by some code that shouldn't have been commented out.
+

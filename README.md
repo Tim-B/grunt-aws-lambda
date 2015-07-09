@@ -191,6 +191,12 @@ grunt.initConfig({
 
 #### Options
 
+##### options.include_files
+Type: `Array`
+Default value: `[]`
+
+List of files to explicitly include in the package, even if they would be ignored by NPM
+
 ##### options.include_time
 Type: `Boolean`
 Default value: `true`

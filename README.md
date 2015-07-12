@@ -494,3 +494,7 @@ Adding more warnings for various failure cases
 ### 0.7.0
 * Removing some unneeded files from the NPM package.
 
+### 0.8.0
+* Adding `include_files` option to package - [pull request by dhleong](https://github.com/Tim-B/grunt-aws-lambda/pull/19)
+
+

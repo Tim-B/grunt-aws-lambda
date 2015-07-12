@@ -28,7 +28,8 @@ module.exports = function (grunt) {
         var options = this.options({
             'dist_folder': 'dist',
             'include_time': true,
-            'package_folder': './'
+            'package_folder': './',
+            'include_files': []
         });
 
         var pkg = grunt.file.readJSON(path.resolve(options.package_folder + '/package.json'));
@@ -90,6 +91,17 @@ module.exports = function (grunt) {
                         cwd: install_location + '/node_modules/' + pkg.name
                     }
                 ]);
+
+                if (options.include_files.length) {
+                    zipArchive.bulk([
+                        {
+                            src: options.include_files,
+                            dot: true,
+                            expand: true,
+                            cwd: options.package_folder
+                        }
+                    ]);
+                }
 
                 zipArchive.finalize();
 

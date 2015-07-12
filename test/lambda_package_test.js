@@ -59,11 +59,12 @@ exports.lambda_package = {
         });
     },
     custom_options: function (test) {
-        test.expect(5);
+        test.expect(6);
         var zip = new AdmZip("tmp/dist/another-lambda-function_0-0-1_latest.zip");
         var zipEntries = zip.getEntries();
 
         var required = [
+            'custom.json',
             'index.js',
             'package.json',
             'node_modules/',
@@ -79,4 +80,5 @@ exports.lambda_package = {
 
         test.done();
     }
+
 };

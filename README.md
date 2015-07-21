@@ -347,6 +347,12 @@ Default value: `null`
 
 If you wish to use a specific AWS credentials profile you can specify it here, otherwise it will use the environment default.
 
+##### options.region
+Type: `String`
+Default value: `us-east-1`
+
+Specify the AWS region your functions will be uploaded to.
+
 ##### options.timeout
 Type: `Integer`
 Default value: `null`

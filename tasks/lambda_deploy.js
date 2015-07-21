@@ -13,7 +13,7 @@ module.exports = function (grunt) {
     var path = require('path');
     var fs = require('fs');
     var AWS = require('aws-sdk');
-
+    var arnParser = require('../utils/arn_parser');
 
     // Please see the Grunt documentation for more information regarding task
     // creation: http://gruntjs.com/creating-tasks
@@ -44,6 +44,10 @@ module.exports = function (grunt) {
 
         if(deploy_arn !== null) {
             deploy_function = deploy_arn;
+            var functionInfo = arnParser.parse(deploy_arn);
+            if (functionInfo && functionInfo.region) {
+                options.region = functionInfo.region;
+            }
         }
 
         var done = this.async();

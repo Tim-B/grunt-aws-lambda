@@ -63,7 +63,6 @@ module.exports = function (grunt) {
                 }
             }
 
-            var current = data.Configuration;
             var configParams = {};
 
 

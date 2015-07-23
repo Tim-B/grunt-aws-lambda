@@ -94,7 +94,7 @@ module.exports = function (grunt) {
                     callback(false);
                     return;
                 }
-            }
+            };
 
             grunt.log.writeln('Uploading...');
             fs.readFile(deploy_package, function (err, data) {
@@ -106,7 +106,7 @@ module.exports = function (grunt) {
                 var codeParams = {
                     FunctionName: deploy_function,
                     ZipFile: data
-                }
+                };
 
                 lambda.updateFunctionCode(codeParams, function (err, data) {
                     if (err) {

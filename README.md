@@ -351,7 +351,7 @@ If you wish to use a specific AWS credentials profile you can specify it here, o
 Type: `String`
 Default value: `us-east-1`
 
-Specify the AWS region your functions will be uploaded to.
+Specify the AWS region your functions will be uploaded to. Note that if an ARN is supplied this option is not required.
 
 ##### options.timeout
 Type: `Integer`
@@ -502,5 +502,8 @@ Adding more warnings for various failure cases
 
 ### 0.8.0
 * Adding `include_files` option to package - [pull request by dhleong](https://github.com/Tim-B/grunt-aws-lambda/pull/19)
+
+### 0.9.0
+* Parsing region automatically from ARN - [pull request by jvwing](https://github.com/Tim-B/grunt-aws-lambda/pull/25)
 
 

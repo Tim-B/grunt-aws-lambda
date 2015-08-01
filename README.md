@@ -506,4 +506,7 @@ Adding more warnings for various failure cases
 ### 0.9.0
 * Parsing region automatically from ARN - [pull request by jvwing](https://github.com/Tim-B/grunt-aws-lambda/pull/25)
 
+### 0.10.0
+* Making NPM a regular dependency to resolve [#20](https://github.com/Tim-B/grunt-aws-lambda/issues/20) - [pull request by timdp](https://github.com/Tim-B/grunt-aws-lambda/pull/27)
+
 

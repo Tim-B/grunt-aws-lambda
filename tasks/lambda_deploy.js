@@ -24,6 +24,9 @@ module.exports = function (grunt) {
 
         var options = this.options({
             profile: null,
+            accessKeyId: null,
+            secretAccessKey: null,
+            credentialsJSON: null,
             region: 'us-east-1',
             timeout: null,
             memory: null
@@ -33,6 +36,16 @@ module.exports = function (grunt) {
             var credentials = new AWS.SharedIniFileCredentials({profile: options.profile});
             AWS.config.credentials = credentials;
         }
+
+        if (options.accessKeyId !== null && options.secretAccessKey !== null) {
+          AWS.config.update({accessKeyId: options.accessKeyId, secretAccessKey: options.secretAccessKey});
+        }
+
+        if (options.credentialsJSON !== null) {
+          AWS.config.loadFromPath(options.credentialsJSON);
+        }
+
+        AWS.config.update({region: options.region});
 
         var deploy_function = grunt.config.get('lambda_deploy.' + this.target + '.function');
         var deploy_arn = grunt.config.get('lambda_deploy.' + this.target + '.arn');

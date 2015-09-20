@@ -61,11 +61,10 @@ npm packages which should be bundled with your lambda function must be included 
 [Read More](#default-options-1)
 
 
-## Specify AWS credentials in ~/.aws/credentials
+## Authenticating to AWS
 
-This will save you from accidentally committing AWS credentials.
-
-[Read More](#aws-credentials)
+This library supports providing credentials for AWS via an IAM Role, an AWS CLI profile, environment variables, a JSON file on disk, or passed in credentials.
+To learn more, please see the [below section](#aws-credentials)
 
 ## grunt-aws-lambda tasks
 
@@ -346,6 +345,25 @@ Type: `String`
 Default value: `null`
 
 If you wish to use a specific AWS credentials profile you can specify it here, otherwise it will use the environment default.
+You can also specify it with the environment variable `AWS_PROFILE`
+
+##### options.accessKeyId
+Type: `String`
+Default value: `null`
+
+If you wish to use hardcoded AWS credentials you should specify the Access Key ID here
+
+##### options.secretAccessKey
+Type: `String`
+Default value: `null`
+
+If you wish to use hardcoded AWS credentials you should specify the Secret Access Key here
+
+##### options.credentialsJSON
+Type: `String`
+Default value: `null`
+
+If you wish to use hardcoded AWS credentials saved in a JSON file, put the path to the JSON here. The JSON must conform to the [AWS format](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html#Credentials_from_Disk).
 
 ##### options.region
 Type: `String`
@@ -357,8 +375,8 @@ Specify the AWS region your functions will be uploaded to. Note that if an ARN i
 Type: `Integer`
 Default value: `null`
 Depending on your Lambda function, you might need to increase the timeout value. The default timeout assigned by AWS is currently 3 seconds.
- If you wish to increase this timeout set the value here.
- 
+If you wish to increase this timeout set the value here.
+
 ##### options.memory
  Type: `Integer`
  Default value: `null`
@@ -392,7 +410,7 @@ grunt.initConfig({
             arn: 'arn:aws:lambda:us-east-1:123456781234:function:my-function',
             options: {
                 timeout : 10,
-                memory: 256            
+                memory: 256
             }
         }
     }
@@ -414,55 +432,46 @@ You can then run `grunt deploy` to perform both these functions in one step.
 
 ### AWS credentials
 
-The AWS SDK is configured to look for credentials in the environment, that is it will look in `~/.aws/credentials`.
+The AWS SDK is configured to look for credentials in the following order:
 
-This file should look something like:
-```
-[default]
-aws_access_key_id = <YOUR_ACCESS_KEY_ID>
-aws_secret_access_key = <YOUR_SECRET_ACCESS_KEY>
-```
+1. an IAM Role (if running on EC2)
+2. an AWS CLI profile (from `~/.aws/credentials`)
+3. environment variables (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN`)
+4. a JSON file on disk
+5. Hardcoded credentials passed into grunt-aws
 
 For more information [read this documentation](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html).
 
 ### AWS permissions
 
-To run the deploy command the AWS credentials require permissions to access lambda including `lambda:UploadFunction` and
- `iam:PassRole` for the role which is assigned to the function.
+To run the deploy command the AWS credentials require permissions to access lambda including `lambda:GetFunction`,
+`lambda:UploadFunction`, `lambda:UpdateFunctionCode`, `lambda:UpdateFunctionConfiguration` and
+`iam:PassRole` for the role which is assigned to the function.
 
-It is recommended that the following two policies be applied to the user:
+It is recommended that the following policy be applied to the user:
 
 ```json
 {
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "Stmt1404366560000",
-      "Effect": "Allow",
+      "Sid": "Stmt1442787227063",
       "Action": [
-        "lambda:*"
+        "lambda:GetFunction",
+        "lambda:UploadFunction",
+        "lambda:UpdateFunctionCode",
+        "lambda:UpdateFunctionConfiguration"
       ],
-      "Resource": [
-        "*"
-      ]
-    }
-  ]
-}
-```
-
-```json
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "Stmt1404366560000",
       "Effect": "Allow",
+      "Resource": "arn:aws:lambda:*"
+    },
+    {
+      "Sid": "Stmt1442787265773",
       "Action": [
         "iam:PassRole"
       ],
-      "Resource": [
-        "arn:aws:iam::<my_account_id>:role/<my_role_name>"
-      ]
+      "Effect": "Allow",
+      "Resource": "arn:aws:iam::<my_account_id>:role/<my_role_name>"
     }
   ]
 }
@@ -483,15 +492,15 @@ Adding more warnings for various failure cases
 
 ### 0.4.0
 
-* Added support for succeed and fail functions - [pull request by jonyo](https://github.com/Tim-B/grunt-aws-lambda/pull/11) 
+* Added support for succeed and fail functions - [pull request by jonyo](https://github.com/Tim-B/grunt-aws-lambda/pull/11)
 * Added NPM to package.json - [pull request by jonyo](https://github.com/Tim-B/grunt-aws-lambda/pull/13), should address [issue 2](https://github.com/Tim-B/grunt-aws-lambda/issues/2#issuecomment-104805707)
 * Added timeout and memory options - [timeout pull request by aidancasey](https://github.com/Tim-B/grunt-aws-lambda/pull/3)
 * Bumped aws-sdk version
 * Bumped adm-zip version, will hopefully address [issue 4](https://github.com/Tim-B/grunt-aws-lambda/issues/4)
 
 ### 0.5.0
-* Fixed issue where dotfiles weren't packaged - [see issue 17](https://github.com/Tim-B/grunt-aws-lambda/issues/17) 
-* Fixed issue where task could be done before zip writing is finished - [pull request by qen](https://github.com/Tim-B/grunt-aws-lambda/pull/16) 
+* Fixed issue where dotfiles weren't packaged - [see issue 17](https://github.com/Tim-B/grunt-aws-lambda/issues/17)
+* Fixed issue where task could be done before zip writing is finished - [pull request by qen](https://github.com/Tim-B/grunt-aws-lambda/pull/16)
 * Monkey patched node-archiver to force permissions to be 777 for all files in package - [see issue 6](https://github.com/Tim-B/grunt-aws-lambda/issues/6)
 
 ### 0.6.0

@@ -63,7 +63,8 @@ module.exports = function (grunt) {
                 if(err.statusCode === 404) {
                     grunt.fail.warn('Unable to find lambda function ' + deploy_function + ', verify the lambda function name and AWS region are correct.');
                 } else {
-                    grunt.fail.warn('AWS API request failed, check your AWS credentials, region and permissions are correct.');
+                    grunt.log.error('AWS API request failed with ' + err.statusCode + ' - ' + err);
+                    grunt.fail.warn('Check your AWS credentials, region and permissions are correct.');
                 }
             }
 

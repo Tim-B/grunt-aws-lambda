@@ -347,6 +347,12 @@ Default value: `null`
 If you wish to use a specific AWS credentials profile you can specify it here, otherwise it will use the environment default.
 You can also specify it with the environment variable `AWS_PROFILE`
 
+##### options.roleArn
+Type: `String`
+Default value: `null`
+
+If you wish to assume a specific role from an EC2 instance you can specify it here, otherwise it will use the environment default.
+
 ##### options.accessKeyId
 Type: `String`
 Default value: `null`
@@ -517,5 +523,3 @@ Adding more warnings for various failure cases
 
 ### 0.10.0
 * Making NPM a regular dependency to resolve [#20](https://github.com/Tim-B/grunt-aws-lambda/issues/20) - [pull request by timdp](https://github.com/Tim-B/grunt-aws-lambda/pull/27)
-
-

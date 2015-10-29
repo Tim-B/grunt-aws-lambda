@@ -29,7 +29,8 @@ module.exports = function (grunt) {
             credentialsJSON: null,
             region: 'us-east-1',
             timeout: null,
-            memory: null
+            memory: null,
+            alias: null
         });
 
         if (options.profile !== null) {
@@ -151,7 +152,7 @@ module.exports = function (grunt) {
                     ZipFile: data
                 };
 
-                var publish = (options.alias != null);
+                var publish = (options.alias !== null);
                 if (publish) {
                     codeParams.Publish = true;
                 }

@@ -152,7 +152,7 @@ module.exports = function (grunt) {
                     ZipFile: data
                 };
 
-                var publish = (options.alias !== null);
+                var publish = (options.alias != null);
                 if (publish) {
                     codeParams.Publish = true;
                 }

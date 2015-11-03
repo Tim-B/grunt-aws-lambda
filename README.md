@@ -309,6 +309,12 @@ Default value: None - Required (if you havn't specified an ARN)
 
 *This option is deprecated, use arn instead*. The name of your target Lambda function, ie. the name of the function in the AWS console.
 
+##### alias
+Type: `String`
+Default value: None
+
+The alias under which to publish your function. If no alias is supplied, only `$LATEST` will be updated.
+
 ##### package
 Type: `String`
 Default value: Package name set by package task of same target - see below.

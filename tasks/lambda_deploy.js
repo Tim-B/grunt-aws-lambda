@@ -30,7 +30,8 @@ module.exports = function (grunt) {
             credentialsJSON: null,
             region: 'us-east-1',
             timeout: null,
-            memory: null
+            memory: null,
+            alias: null
         });
 
         if (options.profile !== null) {
@@ -62,7 +63,7 @@ module.exports = function (grunt) {
         var deploy_package = grunt.config.get('lambda_deploy.' + this.target + '.package');
 
         if(deploy_arn === null && deploy_function === null) {
-            grunt.fail.warn('You must specify either an arn or a function name.');
+            grunt.fail.fatal('You must specify either an arn or a function name.');
         }
 
         if(deploy_arn !== null) {
@@ -84,10 +85,10 @@ module.exports = function (grunt) {
 
             if (err) {
                 if(err.statusCode === 404) {
-                    grunt.fail.warn('Unable to find lambda function ' + deploy_function + ', verify the lambda function name and AWS region are correct.');
+                    grunt.fail.fatal('Unable to find lambda function ' + deploy_function + ', verify the lambda function name and AWS region are correct.');
                 } else {
                     grunt.log.error('AWS API request failed with ' + err.statusCode + ' - ' + err);
-                    grunt.fail.warn('Check your AWS credentials, region and permissions are correct.');
+                    grunt.fail.fatal('Check your AWS credentials, region and permissions are correct.');
                 }
             }
 
@@ -108,22 +109,51 @@ module.exports = function (grunt) {
                     func_options.FunctionName = func_name;
                     lambda.updateFunctionConfiguration(func_options, function(err, data) {
                         if (err) {
-                            grunt.fail.warn('Could not update config, check that values and permissions are valid');
+                            grunt.fail.fatal('Could not update config, check that values and permissions are valid');
                         }
                         grunt.log.writeln('Config updated.');
-                        callback(data);
+                        callback();
                     });
                 } else {
                     grunt.log.writeln('No config updates to make.');
-                    callback(false);
+                    callback();
                     return;
                 }
+            };
+
+            var createOrUpdateAlias = function (fn, alias, version, callback) {
+                lambda.getAlias({
+                    FunctionName: fn,
+                    Name: alias
+                }, function (err, data) {
+                    if (err && err.statusCode !== 404) {
+                        grunt.fail.fatal('Failed to get alias: ' + err);
+                    }
+                    var op;
+                    if (err) {
+                        grunt.log.writeln('Alias ' + alias + ' not found, creating.');
+                        op = 'createAlias';
+                    } else {
+                        grunt.log.writeln('Alias ' + alias + ' already exists, updating.');
+                        op = 'updateAlias';
+                    }
+                    lambda[op]({
+                        FunctionName: fn,
+                        Name: alias,
+                        FunctionVersion: version
+                    }, function (err, data) {
+                        if (err) {
+                            grunt.fail.fatal('Error from ' + op + ': ' + err);
+                        }
+                        callback();
+                    });
+                })
             };
 
             grunt.log.writeln('Uploading...');
             fs.readFile(deploy_package, function (err, data) {
                 if (err) {
-                    grunt.fail.warn('Could not read package file ('+deploy_package+'), verify the lambda package '+
+                    grunt.fail.fatal('Could not read package file ('+deploy_package+'), verify the lambda package '+
                         'location is correct, and that you have already created the package using lambda_package.');
                 }
 
@@ -132,13 +162,28 @@ module.exports = function (grunt) {
                     ZipFile: data
                 };
 
+                var publish = (options.alias != null);
+                if (publish) {
+                    codeParams.Publish = true;
+                }
+
+                var reallyDone = function () {
+                    done(true);
+                };
+
                 lambda.updateFunctionCode(codeParams, function (err, data) {
                     if (err) {
-                        grunt.fail.warn('Package upload failed, check you have lambda:UpdateFunctionCode permissions.');
+                        grunt.fail.fatal('Package upload failed: ' + err);
                     }
+                    var version = data.Version;
                     grunt.log.writeln('Package deployed.');
-                    updateConfig(deploy_function, configParams, function(data){
-                        done(true);
+                    updateConfig(deploy_function, configParams, function(){
+                        if (publish) {
+                            grunt.log.writeln('Aliasing ' + options.alias + ' to version ' + version + '.');
+                            createOrUpdateAlias(deploy_function, options.alias, version, reallyDone);
+                        } else {
+                            reallyDone();
+                        }
                     });
                 });
             });

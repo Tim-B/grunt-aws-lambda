@@ -1,3 +1,4 @@
 .idea
 *.iml
 tmp
+.DS_Store

@@ -287,8 +287,8 @@ grunt.initConfig({
         default: {
             options: {
                 // Task-specific options go here.
-            },
-            arn: 'arn:aws:lambda:us-east-1:123456781234:function:my-function'
+                arn: 'arn:aws:lambda:us-east-1:123456781234:function:my-function'
+            }
         }
     },
 });
@@ -440,6 +440,15 @@ The AWS SDK is configured to look for credentials in the following order:
 4. a JSON file on disk
 5. Hardcoded credentials passed into grunt-aws
 
+The preferred method of authenticating during local development is by providing credentials in `~/.aws/credentials`,
+it should look something like this:
+
+```
+[default]
+aws_access_key_id = <YOUR_ACCESS_KEY_ID>
+aws_secret_access_key = <YOUR_SECRET_ACCESS_KEY>
+```
+
 For more information [read this documentation](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html).
 
 ### AWS permissions
@@ -518,4 +527,7 @@ Adding more warnings for various failure cases
 ### 0.10.0
 * Making NPM a regular dependency to resolve [#20](https://github.com/Tim-B/grunt-aws-lambda/issues/20) - [pull request by timdp](https://github.com/Tim-B/grunt-aws-lambda/pull/27)
 
+### 0.11.0
+* Including AWS API error message in deployment failure - [pull request by CaseyBurns](https://github.com/Tim-B/grunt-aws-lambda/pull/40)
+* Providing a method to pass AWS credentials in either the Gruntfile or credentials file - [pull request by robbiet480](https://github.com/Tim-B/grunt-aws-lambda/pull/34)
 

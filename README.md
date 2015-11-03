@@ -347,7 +347,7 @@ Default value: `null`
 If you wish to use a specific AWS credentials profile you can specify it here, otherwise it will use the environment default.
 You can also specify it with the environment variable `AWS_PROFILE`
 
-##### options.roleArn
+##### options.RoleArn
 Type: `String`
 Default value: `null`
 

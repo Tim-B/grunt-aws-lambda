@@ -24,7 +24,7 @@ module.exports = function (grunt) {
 
         var options = this.options({
             profile: null,
-            roleArn: null,
+            RoleArn: null,
             accessKeyId: null,
             secretAccessKey: null,
             credentialsJSON: null,
@@ -38,12 +38,12 @@ module.exports = function (grunt) {
             AWS.config.credentials = credentials;
         }
 
-        if (options.roleArn !== null) {
+        if (options.RoleArn !== null) {
           AWS.config.credentials = new AWS.EC2MetadataCredentials({
             httpOptions: { timeout: 5000 } // 5 second timeout
           });
           AWS.config.credentials = new AWS.TemporaryCredentials({
-            RoleArn: options.roleArn
+            RoleArn: options.RoleArn
           });
         }
 

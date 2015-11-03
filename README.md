@@ -347,6 +347,12 @@ Default value: `null`
 If you wish to use a specific AWS credentials profile you can specify it here, otherwise it will use the environment default.
 You can also specify it with the environment variable `AWS_PROFILE`
 
+##### options.roleArn
+Type: `String`
+Default value: `null`
+
+If you wish to assume a specific role from an EC2 instance you can specify it here, otherwise it will use the environment default.
+
 ##### options.accessKeyId
 Type: `String`
 Default value: `null`
@@ -530,4 +536,4 @@ Adding more warnings for various failure cases
 ### 0.11.0
 * Including AWS API error message in deployment failure - [pull request by CaseyBurns](https://github.com/Tim-B/grunt-aws-lambda/pull/40)
 * Providing a method to pass AWS credentials in either the Gruntfile or credentials file - [pull request by robbiet480](https://github.com/Tim-B/grunt-aws-lambda/pull/34)
-
+* Adding support for AWS temporary credentials - [pull request by olih](https://github.com/Tim-B/grunt-aws-lambda/pull/46)

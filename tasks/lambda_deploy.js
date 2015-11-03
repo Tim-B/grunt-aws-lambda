@@ -24,6 +24,7 @@ module.exports = function (grunt) {
 
         var options = this.options({
             profile: null,
+            roleArn: null,
             accessKeyId: null,
             secretAccessKey: null,
             credentialsJSON: null,
@@ -35,6 +36,15 @@ module.exports = function (grunt) {
         if (options.profile !== null) {
             var credentials = new AWS.SharedIniFileCredentials({profile: options.profile});
             AWS.config.credentials = credentials;
+        }
+
+        if (options.roleArn !== null) {
+          AWS.config.credentials = new AWS.EC2MetadataCredentials({
+            httpOptions: { timeout: 5000 } // 5 second timeout
+          });
+          AWS.config.credentials = new AWS.TemporaryCredentials({
+            RoleArn: options.roleArn
+          });
         }
 
         if (options.accessKeyId !== null && options.secretAccessKey !== null) {

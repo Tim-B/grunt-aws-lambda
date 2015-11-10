@@ -22,12 +22,35 @@ module.exports = function (grunt) {
         var options = this.options({
             'handler': 'handler',
             'file_name': 'index.js',
-            'event': 'event.json'
+            'event': 'event.json',
+            'client_context': 'client_context.json',
+            'identity': 'identity.json'
         });
 
         grunt.log.writeln("");
 
         var done = this.async();
+
+        var clientContext = null;
+
+        //since clientContext should be optional, skip if doesn't exist
+        try{
+           clientContext = JSON.parse(fs.readFileSync(path.resolve(options.client_context), "utf8"));
+        } catch (e) {
+            if (e.code !== 'ENOENT') {
+                throw e;
+            }
+        }
+
+        var identity = null;
+        //since identity should be optional, skip if doesn't exist
+        try{
+            identity = JSON.parse(fs.readFileSync(path.resolve(options.identity), "utf8"));
+        } catch (e) {
+            if (e.code !== 'ENOENT') {
+                throw e;
+            }
+        }
 
         var context = {
             done: function (error, result) {
@@ -53,8 +76,8 @@ module.exports = function (grunt) {
             },
             awsRequestId: 'LAMBDA_INVOKE',
             logStreamName: 'LAMBDA_INVOKE',
-            clientContext: null,
-            identity: null
+            clientContext: clientContext,
+            identity: identity
         };
 
         var lambda = require(path.resolve(options.file_name));

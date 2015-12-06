@@ -32,9 +32,9 @@ module.exports = function (grunt) {
         var context = {
             done: function (error, result) {
                 if (error === null) {
-                    this.succeed(result);
+                    context.succeed(result);
                 } else {
-                    this.fail(error);
+                    context.fail(error);
                 }
             },
             succeed: function (result) {

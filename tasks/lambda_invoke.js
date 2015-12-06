@@ -40,15 +40,17 @@ module.exports = function (grunt) {
             succeed: function (result) {
                 grunt.log.writeln("");
                 grunt.log.writeln("Success!  Message:");
-                grunt.log.writeln("------------------");
-                grunt.log.writeln(result);
+                grunt.log.writeln("------------------");'
+                var msg = (typeof(result) === 'object' ? JSON.stringify(result) : result);
+                grunt.log.writeln(msg);
                 done(true);
             },
             fail: function (error) {
                 grunt.log.writeln("");
                 grunt.log.writeln("Failure!  Message:");
                 grunt.log.writeln("------------------");
-                grunt.log.writeln(error);
+                var msg = (typeof(result) === 'object' ? JSON.stringify(result) : result);
+                grunt.log.writeln(msg);
                 done(false);
             },
             awsRequestId: 'LAMBDA_INVOKE',

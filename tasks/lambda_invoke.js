@@ -31,7 +31,7 @@ module.exports = function (grunt) {
 
         var context = {
             done: function (error, result) {
-                if (error === null) {
+                if (error === null || typeof(error) === 'undefined') {
                     context.succeed(result);
                 } else {
                     context.fail(error);
@@ -40,17 +40,17 @@ module.exports = function (grunt) {
             succeed: function (result) {
                 grunt.log.writeln("");
                 grunt.log.writeln("Success!  Message:");
-                grunt.log.writeln("------------------");'
-                var msg = (typeof(result) === 'object' ? JSON.stringify(result) : result);
-                grunt.log.writeln(msg);
+                grunt.log.writeln("------------------");
+                var msg = (typeof(result) === 'object') ? JSON.stringify(result) : result;
+                grunt.log.writeln((typeof(result) !== 'undefined') ? msg : "Successful!");
                 done(true);
             },
             fail: function (error) {
                 grunt.log.writeln("");
                 grunt.log.writeln("Failure!  Message:");
                 grunt.log.writeln("------------------");
-                var msg = (typeof(result) === 'object' ? JSON.stringify(result) : result);
-                grunt.log.writeln(msg);
+                var msg = (typeof(error) === 'object') ? JSON.stringify(error) : error;
+                grunt.log.writeln((typeof(error) !== 'undefined') ? msg : "Error not provided.");
                 done(false);
             },
             awsRequestId: 'LAMBDA_INVOKE',

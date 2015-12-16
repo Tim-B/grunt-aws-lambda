@@ -28,6 +28,7 @@ module.exports = function (grunt) {
         var options = this.options({
             'dist_folder': 'dist',
             'include_time': true,
+            'include_version': true,
             'package_folder': './',
             'include_files': []
         });
@@ -38,7 +39,11 @@ module.exports = function (grunt) {
         var done = this.async();
 
         var now = new Date();
-        var time_string = 'latest';
+        var archive_name = pkg.name;
+
+        if (options.include_version) {
+            archive_name += '_' + pkg.version.replace(/\./g, '-')
+        }
 
         if (options.include_time) {
             var time_components = [
@@ -49,12 +54,9 @@ module.exports = function (grunt) {
                 now.getMinutes(),
                 now.getSeconds()
             ];
-            time_string =  time_components.join('-');
+
+            archive_name += '_' + time_components.join('-');
         }
-
-        var file_version = pkg.version.replace(/\./g, '-');
-        var archive_name = pkg.name + '_' + file_version + '_' + time_string;
-
 
         npm.load([], function (err, npm) {
 

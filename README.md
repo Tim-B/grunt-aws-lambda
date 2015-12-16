@@ -196,12 +196,19 @@ Default value: `[]`
 
 List of files to explicitly include in the package, even if they would be ignored by NPM
 
+##### options.include_version
+Type: `Boolean`
+Default value: `true`
+
+Whether or not to add version the packages, if set to true the version from the package.json will be included in the zip name, if false
+ then the package name will be constant and consist of just the package name and (time if options.include_time).
+
 ##### options.include_time
 Type: `Boolean`
 Default value: `true`
 
 Whether or not to timestamp the packages, if set to true the current date/time will be included in the zip name, if false
- then the package name will be constant and consist of just the package name and version.
+ then the package name will be constant and consist of just the package name and (version if options.include_version).
 
 ##### options.package_folder
 Type: `String`

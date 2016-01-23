@@ -92,7 +92,7 @@ module.exports = function (grunt) {
                         cwd: install_location + '/node_modules/' + pkg.name
                     }
                 ]);
-debugger;
+
                 if (options.include_files.length) {
                     zipArchive.bulk([
                         {

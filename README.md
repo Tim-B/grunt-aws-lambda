@@ -384,10 +384,16 @@ Depending on your Lambda function, you might need to increase the timeout value.
 If you wish to increase this timeout set the value here.
 
 ##### options.memory
- Type: `Integer`
- Default value: `null`
- Sets the memory assigned to the function. If null then the current setting for the function will be used. Value is in
- MB and must be a multiple of 64.
+Type: `Integer`
+Default value: `null`
+
+Sets the memory assigned to the function. If null then the current setting for the function will be used. Value is in MB and must be a multiple of 64.
+
+##### options.handler
+Type: `String`
+Default value: `null`
+
+Sets the handler for your lambda function. If left null, the current setting will remain unchanged. 
 
 #### Usage Examples
 

@@ -30,7 +30,8 @@ module.exports = function (grunt) {
             credentialsJSON: null,
             region: 'us-east-1',
             timeout: null,
-            memory: null
+            memory: null,
+            handler: null
         });
 
         if (options.profile !== null) {
@@ -101,6 +102,10 @@ module.exports = function (grunt) {
 
             if (options.memory !== null) {
                 configParams.MemorySize = options.memory;
+            }
+
+            if (options.handler !== null) {
+                configParams.Handler = options.handler;
             }
 
             var updateConfig = function(func_name, func_options, callback) {

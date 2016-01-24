@@ -60,7 +60,7 @@ exports.lambda_package = {
     },
     custom_options: function (test) {
         test.expect(6);
-        var zip = new AdmZip("tmp/dist/another-lambda-function_0-0-1_latest.zip");
+        var zip = new AdmZip("tmp/dist/another-lambda-function.zip");
         var zipEntries = zip.getEntries();
 
         var required = [

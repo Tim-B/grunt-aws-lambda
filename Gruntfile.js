@@ -69,6 +69,7 @@ module.exports = function (grunt) {
                 options: {
                     dist_folder: 'tmp/dist',
                     include_time: false,
+                    include_version: false,
                     package_folder: 'test/fixtures/package_custom',
                     include_files: ['custom.json']
                 }

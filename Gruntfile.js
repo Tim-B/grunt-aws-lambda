@@ -49,6 +49,13 @@ module.exports = function (grunt) {
                     event: 'test/fixtures/event.json',
                     handler: 'myfunction'
                 }
+            },
+            package_folder_options: {
+                options: {
+                    package_folder: 'test/fixtures/package_folder_option',
+                    file_name: 'index.js',
+                    event: '../../../test/fixtures/event.json'
+                }
             }
         },
         lambda_package: {

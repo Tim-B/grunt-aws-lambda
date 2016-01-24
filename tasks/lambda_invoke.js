@@ -13,13 +13,13 @@ module.exports = function (grunt) {
     var path = require('path');
     var fs = require('fs');
 
-
     // Please see the Grunt documentation for more information regarding task
     // creation: http://gruntjs.com/creating-tasks
 
     grunt.registerMultiTask('lambda_invoke', 'Invokes a lambda function for testing purposes', function () {
 
         var options = this.options({
+            'package_folder': './',
             'handler': 'handler',
             'file_name': 'index.js',
             'event': 'event.json',
@@ -82,10 +82,19 @@ module.exports = function (grunt) {
             identity: identity
         };
 
+        var cwd;
+        if(options.package_folder) {
+          cwd = process.cwd();
+          process.chdir(path.resolve(options.package_folder));
+        }
+        
         var lambda = require(path.resolve(options.file_name));
         var event = JSON.parse(fs.readFileSync(path.resolve(options.event), "utf8"));
         lambda[options.handler](event, context);
-
+        
+        if(cwd) {
+          process.chdir(cwd);
+        }
     });
 
 };

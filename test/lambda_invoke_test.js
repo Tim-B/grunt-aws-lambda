@@ -1,6 +1,7 @@
 'use strict';
 
 var grunt = require('grunt');
+var path = require('path');
 
 /*
  ======== A Handy Little Nodeunit Reference ========
@@ -70,6 +71,30 @@ exports.lambda_invoke = {
             var expected = getNormalizedFile('test/expected/failure_options');
             var actual = grunt.util.normalizelf(result.stdout);
             test.equal(actual, expected);
+            test.done();
+        });
+    },
+    package_folder_options: function (test) {
+        test.expect(2);
+
+        grunt.util.spawn({
+            grunt: true,
+            args: ['lambda_invoke:package_folder_options', '--no-color']
+        }, function (err, result, code) {
+
+            var cwd = process.cwd();
+
+            // test cwd inside the function
+            var expected_cwd = 'Running "lambda_invoke:package_folder_options" (lambda_invoke) task\n\n\nSuccess!  Message:\n------------------\n' +
+              path.join(cwd, 'test/fixtures/package_folder_option') +
+              '\n\nDone, without errors.';
+              
+            var actual_cwd = grunt.util.normalizelf(result.stdout);
+            test.equal(actual_cwd, expected_cwd);
+
+            // test back from the function
+            test.equal(process.cwd(), cwd);
+
             test.done();
         });
     }

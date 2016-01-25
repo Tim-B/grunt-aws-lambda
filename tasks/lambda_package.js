@@ -29,7 +29,8 @@ module.exports = function (grunt) {
             'dist_folder': 'dist',
             'include_time': true,
             'package_folder': './',
-            'include_files': []
+            'include_files': [],
+            'include_basedir': './'
         });
 
         var pkg = grunt.file.readJSON(path.resolve(options.package_folder + '/package.json'));
@@ -98,7 +99,7 @@ module.exports = function (grunt) {
                             src: options.include_files,
                             dot: true,
                             expand: true,
-                            cwd: options.package_folder
+                            cwd: options.include_basedir
                         }
                     ]);
                 }

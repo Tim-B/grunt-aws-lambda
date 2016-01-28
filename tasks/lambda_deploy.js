@@ -66,7 +66,7 @@ module.exports = function (grunt) {
             grunt.fail.warn('You must specify either an arn or a function name.');
         }
 
-        if(deploy_arn !== null) {
+        if(deploy_arn) {
             deploy_function = deploy_arn;
             var functionInfo = arnParser.parse(deploy_arn);
             if (functionInfo && functionInfo.region) {

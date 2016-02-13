@@ -83,7 +83,8 @@ module.exports = function (grunt) {
         },
         // Unit tests.
         nodeunit: {
-            tests: ['test/*_test.js']
+            unit: ['test/unit/*_test.js'],
+            integ: ['test/integ/*_test.js']
         }
     });
 

@@ -1,6 +1,6 @@
 'use strict';
 
-var arnParser = require('../utils/arn_parser');
+var arnParser = require('../../utils/arn_parser');
 
 exports.parseFullArn = function(test){
     var arn = 'arn:aws:lambda:us-west-2:123456789012:function:MyFunctionName';

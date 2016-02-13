@@ -104,7 +104,7 @@ packageTaskTest.setUp = function(done) {
         }
     });
 
-    clock = sinon.useFakeTimers();
+    clock = sinon.useFakeTimers(1455618136000);
     done();
 };
 
@@ -124,16 +124,16 @@ packageTaskTest.testDoneSucceed = function(test) {
         callback: function(harness) {
             test.equal(harness.status, true);
             test.equal(harness.output.length, 1);
-            test.equal(harness.output[0], 'Created package at ./dist/some-npm-package_1-1-1_1969-11-31-16-0-0.zip');
+            test.equal(harness.output[0], 'Created package at ./dist/some-npm-package_1-1-1_2016-1-16-2-22-16.zip');
             test.ok(npmAPI.commands.install.calledWith('temp-dir', './'));
             test.ok(zipAPI.bulk.calledWithMatch(sinon.match(function(value) {
                 return value[0].cwd == 'temp-dir/node_modules/some-npm-package';
             })));
             test.ok(mkdirpStub.calledWith('./dist'));
             test.ok(rimrafStub.calledWith('temp-dir'));
-            test.ok(fsMock.createWriteStream.calledWith('temp-dir/some-npm-package_1-1-1_1969-11-31-16-0-0.zip'));
-            test.ok(fsMock.createWriteStream.calledWith('./dist/some-npm-package_1-1-1_1969-11-31-16-0-0.zip'));
-            test.equal(harness.config['lambda_deploy.fake-target.package'], './dist/some-npm-package_1-1-1_1969-11-31-16-0-0.zip');
+            test.ok(fsMock.createWriteStream.calledWith('temp-dir/some-npm-package_1-1-1_2016-1-16-2-22-16.zip'));
+            test.ok(fsMock.createWriteStream.calledWith('./dist/some-npm-package_1-1-1_2016-1-16-2-22-16.zip'));
+            test.equal(harness.config['lambda_deploy.fake-target.package'], './dist/some-npm-package_1-1-1_2016-1-16-2-22-16.zip');
             test.done();
         }
     };
@@ -152,16 +152,16 @@ packageTaskTest.testDistFolder = function(test) {
         callback: function(harness) {
             test.equal(harness.status, true);
             test.equal(harness.output.length, 1);
-            test.equal(harness.output[0], 'Created package at ./another/folder/some-npm-package_1-1-1_1969-11-31-16-0-0.zip');
+            test.equal(harness.output[0], 'Created package at ./another/folder/some-npm-package_1-1-1_2016-1-16-2-22-16.zip');
             test.ok(npmAPI.commands.install.calledWith('temp-dir', './'));
             test.ok(zipAPI.bulk.calledWithMatch(sinon.match(function(value) {
                 return value[0].cwd == 'temp-dir/node_modules/some-npm-package';
             })));
             test.ok(mkdirpStub.calledWith('./another/folder'));
             test.ok(rimrafStub.calledWith('temp-dir'));
-            test.ok(fsMock.createWriteStream.calledWith('temp-dir/some-npm-package_1-1-1_1969-11-31-16-0-0.zip'));
-            test.ok(fsMock.createWriteStream.calledWith('./another/folder/some-npm-package_1-1-1_1969-11-31-16-0-0.zip'));
-            test.equal(harness.config['lambda_deploy.fake-target.package'], './another/folder/some-npm-package_1-1-1_1969-11-31-16-0-0.zip');
+            test.ok(fsMock.createWriteStream.calledWith('temp-dir/some-npm-package_1-1-1_2016-1-16-2-22-16.zip'));
+            test.ok(fsMock.createWriteStream.calledWith('./another/folder/some-npm-package_1-1-1_2016-1-16-2-22-16.zip'));
+            test.equal(harness.config['lambda_deploy.fake-target.package'], './another/folder/some-npm-package_1-1-1_2016-1-16-2-22-16.zip');
             test.done();
         }
     };
@@ -208,16 +208,16 @@ packageTaskTest.testPackageFolder = function(test) {
         callback: function(harness) {
             test.equal(harness.status, true);
             test.equal(harness.output.length, 1);
-            test.equal(harness.output[0], 'Created package at ./dist/some-npm-package_1-1-1_1969-11-31-16-0-0.zip');
+            test.equal(harness.output[0], 'Created package at ./dist/some-npm-package_1-1-1_2016-1-16-2-22-16.zip');
             test.ok(npmAPI.commands.install.calledWith('temp-dir', './anotherfolder'));
             test.ok(zipAPI.bulk.calledWithMatch(sinon.match(function(value) {
                 return value[0].cwd == 'temp-dir/node_modules/some-npm-package';
             })));
             test.ok(mkdirpStub.calledWith('./dist'));
             test.ok(rimrafStub.calledWith('temp-dir'));
-            test.ok(fsMock.createWriteStream.calledWith('temp-dir/some-npm-package_1-1-1_1969-11-31-16-0-0.zip'));
-            test.ok(fsMock.createWriteStream.calledWith('./dist/some-npm-package_1-1-1_1969-11-31-16-0-0.zip'));
-            test.equal(harness.config['lambda_deploy.fake-target.package'], './dist/some-npm-package_1-1-1_1969-11-31-16-0-0.zip');
+            test.ok(fsMock.createWriteStream.calledWith('temp-dir/some-npm-package_1-1-1_2016-1-16-2-22-16.zip'));
+            test.ok(fsMock.createWriteStream.calledWith('./dist/some-npm-package_1-1-1_2016-1-16-2-22-16.zip'));
+            test.equal(harness.config['lambda_deploy.fake-target.package'], './dist/some-npm-package_1-1-1_2016-1-16-2-22-16.zip');
             test.done();
         }
     };
@@ -238,7 +238,7 @@ packageTaskTest.testIncludeFiles = function(test) {
         callback: function(harness) {
             test.equal(harness.status, true);
             test.equal(harness.output.length, 1);
-            test.equal(harness.output[0], 'Created package at ./dist/some-npm-package_1-1-1_1969-11-31-16-0-0.zip');
+            test.equal(harness.output[0], 'Created package at ./dist/some-npm-package_1-1-1_2016-1-16-2-22-16.zip');
             test.ok(npmAPI.commands.install.calledWith('temp-dir', './'));
             test.ok(zipAPI.bulk.calledWithMatch(sinon.match(function(value) {
                 return value[0].cwd == 'temp-dir/node_modules/some-npm-package';
@@ -248,9 +248,9 @@ packageTaskTest.testIncludeFiles = function(test) {
             })));
             test.ok(mkdirpStub.calledWith('./dist'));
             test.ok(rimrafStub.calledWith('temp-dir'));
-            test.ok(fsMock.createWriteStream.calledWith('temp-dir/some-npm-package_1-1-1_1969-11-31-16-0-0.zip'));
-            test.ok(fsMock.createWriteStream.calledWith('./dist/some-npm-package_1-1-1_1969-11-31-16-0-0.zip'));
-            test.equal(harness.config['lambda_deploy.fake-target.package'], './dist/some-npm-package_1-1-1_1969-11-31-16-0-0.zip');
+            test.ok(fsMock.createWriteStream.calledWith('temp-dir/some-npm-package_1-1-1_2016-1-16-2-22-16.zip'));
+            test.ok(fsMock.createWriteStream.calledWith('./dist/some-npm-package_1-1-1_2016-1-16-2-22-16.zip'));
+            test.equal(harness.config['lambda_deploy.fake-target.package'], './dist/some-npm-package_1-1-1_2016-1-16-2-22-16.zip');
             test.done();
         }
     };

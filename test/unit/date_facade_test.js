@@ -33,7 +33,7 @@ var dateFacade = require('../../utils/date_facade');
 var dateFacadeTest = {};
 
 dateFacadeTest.testGetFormattedTimestamp = function(test) {
-    var fixedDate = new Date(1455403093000);
+    var fixedDate = new Date(2016, 1, 13, 14, 38, 13);
     test.equal(dateFacade.getFormattedTimestamp(fixedDate), '2016-1-13-14-38-13');
     test.done();
 };

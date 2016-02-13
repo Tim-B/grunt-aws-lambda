@@ -543,3 +543,12 @@ Adding more warnings for various failure cases
 * Including AWS API error message in deployment failure - [pull request by CaseyBurns](https://github.com/Tim-B/grunt-aws-lambda/pull/40)
 * Providing a method to pass AWS credentials in either the Gruntfile or credentials file - [pull request by robbiet480](https://github.com/Tim-B/grunt-aws-lambda/pull/34)
 * Adding support for AWS temporary credentials - [pull request by olih](https://github.com/Tim-B/grunt-aws-lambda/pull/46)
+
+### 0.12.0
+
+* Added package_folder option to lambda_invoke task - [pull request by dcaravana](https://github.com/Tim-B/grunt-aws-lambda/pull/62)
+* Adding optional files to contain JSON objects for clientContext and identity to be passed into the lambda_invoke command - [pull request by Skorch](https://github.com/Tim-B/grunt-aws-lambda/pull/51)
+* Add handler option to lambda_deploy task - [pull request by Rawbz](https://github.com/Tim-B/grunt-aws-lambda/pull/52)
+* Fix lambda_deploy config example - [pull request by pracucci](https://github.com/Tim-B/grunt-aws-lambda/pull/56)
+* Context object methods cleanup - [pull request by ubergoob](https://github.com/Tim-B/grunt-aws-lambda/pull/58)
+* Extensive refactoring to improve testability and a new unit test suite

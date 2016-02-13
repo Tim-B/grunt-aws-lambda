@@ -8,7 +8,6 @@
  * Licensed under the MIT license.
  */
 
-
 var path = require('path');
 var fs = require('fs');
 var AWS = require('aws-sdk');

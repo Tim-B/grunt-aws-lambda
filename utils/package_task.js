@@ -1,3 +1,5 @@
+'use strict';
+
 /*
  * grunt-aws-lambda
  * https://github.com/Tim-B/grunt-aws-lambda
@@ -13,8 +15,7 @@ var fs = require('fs');
 var tmp = require('temporary');
 var mkdirp = require('mkdirp');
 var rimraf = require('rimraf');
-
-'use strict';
+var dateFacade = require('./date_facade');
 
 var packageTask = {};
 
@@ -35,19 +36,10 @@ packageTask.getHandler = function (grunt) {
         var dir = new tmp.Dir();
         var done = this.async();
 
-        var now = new Date();
         var time_string = 'latest';
 
         if (options.include_time) {
-            var time_components = [
-                now.getFullYear(),
-                now.getMonth(),
-                now.getDate(),
-                now.getHours(),
-                now.getMinutes(),
-                now.getSeconds()
-            ];
-            time_string = time_components.join('-');
+            time_string = dateFacade.getFormattedTimestamp(new Date());
         }
 
         var file_version = pkg.version.replace(/\./g, '-');

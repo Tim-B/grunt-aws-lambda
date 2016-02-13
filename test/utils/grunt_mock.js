@@ -60,12 +60,12 @@ gruntMock.execute = function(handler, params) {
         harness.config = params.config;
     }
 
-    var handler = handler(new fakeGrunt(harness));
-    handler.prototype.options = fakeOptions(params.options);
-    handler.prototype.async = fakeAsync(params.callback, harness);
-    handler.prototype.target = 'fake-target';
+    var NewHandler = handler(new fakeGrunt(harness));
+    NewHandler.prototype.options = fakeOptions(params.options);
+    NewHandler.prototype.async = fakeAsync(params.callback, harness);
+    NewHandler.prototype.target = 'fake-target';
 
-    new handler;
+    new NewHandler();
 };
 
 module.exports = gruntMock;

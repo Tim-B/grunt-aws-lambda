@@ -38,8 +38,7 @@ var fsMock = require('../utils/fs_mock');
 
 var packageTaskTest = {};
 
-var clock,
-    mkdirpStub,
+var mkdirpStub,
     rimrafStub,
     zipAPI,
     npmAPI;
@@ -104,13 +103,16 @@ packageTaskTest.setUp = function(done) {
         }
     });
 
-    clock = sinon.useFakeTimers(1455618136000);
+    var dateFacadeMock = {
+        getFormattedTimestamp: sinon.stub().returns('2016-1-16-2-22-16')
+    };
+    mockery.registerMock('./date_facade', dateFacadeMock);
+
     done();
 };
 
 packageTaskTest.tearDown = function(done) {
     mockery.disable();
-    clock.restore();
     done();
 };
 
@@ -127,7 +129,7 @@ packageTaskTest.testDoneSucceed = function(test) {
             test.equal(harness.output[0], 'Created package at ./dist/some-npm-package_1-1-1_2016-1-16-2-22-16.zip');
             test.ok(npmAPI.commands.install.calledWith('temp-dir', './'));
             test.ok(zipAPI.bulk.calledWithMatch(sinon.match(function(value) {
-                return value[0].cwd == 'temp-dir/node_modules/some-npm-package';
+                return value[0].cwd === 'temp-dir/node_modules/some-npm-package';
             })));
             test.ok(mkdirpStub.calledWith('./dist'));
             test.ok(rimrafStub.calledWith('temp-dir'));
@@ -155,7 +157,7 @@ packageTaskTest.testDistFolder = function(test) {
             test.equal(harness.output[0], 'Created package at ./another/folder/some-npm-package_1-1-1_2016-1-16-2-22-16.zip');
             test.ok(npmAPI.commands.install.calledWith('temp-dir', './'));
             test.ok(zipAPI.bulk.calledWithMatch(sinon.match(function(value) {
-                return value[0].cwd == 'temp-dir/node_modules/some-npm-package';
+                return value[0].cwd === 'temp-dir/node_modules/some-npm-package';
             })));
             test.ok(mkdirpStub.calledWith('./another/folder'));
             test.ok(rimrafStub.calledWith('temp-dir'));
@@ -183,7 +185,7 @@ packageTaskTest.testIncludeTime = function(test) {
             test.equal(harness.output[0], 'Created package at ./dist/some-npm-package_1-1-1_latest.zip');
             test.ok(npmAPI.commands.install.calledWith('temp-dir', './'));
             test.ok(zipAPI.bulk.calledWithMatch(sinon.match(function(value) {
-                return value[0].cwd == 'temp-dir/node_modules/some-npm-package';
+                return value[0].cwd === 'temp-dir/node_modules/some-npm-package';
             })));
             test.ok(mkdirpStub.calledWith('./dist'));
             test.ok(rimrafStub.calledWith('temp-dir'));
@@ -211,7 +213,7 @@ packageTaskTest.testPackageFolder = function(test) {
             test.equal(harness.output[0], 'Created package at ./dist/some-npm-package_1-1-1_2016-1-16-2-22-16.zip');
             test.ok(npmAPI.commands.install.calledWith('temp-dir', './anotherfolder'));
             test.ok(zipAPI.bulk.calledWithMatch(sinon.match(function(value) {
-                return value[0].cwd == 'temp-dir/node_modules/some-npm-package';
+                return value[0].cwd === 'temp-dir/node_modules/some-npm-package';
             })));
             test.ok(mkdirpStub.calledWith('./dist'));
             test.ok(rimrafStub.calledWith('temp-dir'));
@@ -241,10 +243,10 @@ packageTaskTest.testIncludeFiles = function(test) {
             test.equal(harness.output[0], 'Created package at ./dist/some-npm-package_1-1-1_2016-1-16-2-22-16.zip');
             test.ok(npmAPI.commands.install.calledWith('temp-dir', './'));
             test.ok(zipAPI.bulk.calledWithMatch(sinon.match(function(value) {
-                return value[0].cwd == 'temp-dir/node_modules/some-npm-package';
+                return value[0].cwd === 'temp-dir/node_modules/some-npm-package';
             })));
             test.ok(zipAPI.bulk.calledWithMatch(sinon.match(function(value) {
-                return value[0].src[0] == 'foo/bar.txt';
+                return value[0].src[0] === 'foo/bar.txt';
             })));
             test.ok(mkdirpStub.calledWith('./dist'));
             test.ok(rimrafStub.calledWith('temp-dir'));

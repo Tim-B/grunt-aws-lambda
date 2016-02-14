@@ -259,4 +259,32 @@ packageTaskTest.testIncludeFiles = function(test) {
     gruntMock.execute(packageTask.getHandler, harnessParams);
 };
 
+packageTaskTest.testIncludeVersion = function(test) {
+    test.expect(10);
+
+    var packageTask = require('../../utils/package_task');
+
+    var harnessParams = {
+        options: {
+            'include_version': false
+        },
+        callback: function(harness) {
+            test.equal(harness.status, true);
+            test.equal(harness.output.length, 1);
+            test.equal(harness.output[0], 'Created package at ./dist/some-npm-package_2016-1-16-2-22-16.zip');
+            test.ok(npmAPI.commands.install.calledWith('temp-dir', './'));
+            test.ok(zipAPI.bulk.calledWithMatch(sinon.match(function(value) {
+                return value[0].cwd === 'temp-dir/node_modules/some-npm-package';
+            })));
+            test.ok(mkdirpStub.calledWith('./dist'));
+            test.ok(rimrafStub.calledWith('temp-dir'));
+            test.ok(fsMock.createWriteStream.calledWith('temp-dir/some-npm-package_2016-1-16-2-22-16.zip'));
+            test.ok(fsMock.createWriteStream.calledWith('./dist/some-npm-package_2016-1-16-2-22-16.zip'));
+            test.equal(harness.config['lambda_deploy.fake-target.package'], './dist/some-npm-package_2016-1-16-2-22-16.zip');
+            test.done();
+        }
+    };
+    gruntMock.execute(packageTask.getHandler, harnessParams);
+};
+
 module.exports = packageTaskTest;

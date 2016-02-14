@@ -181,6 +181,13 @@ Default value: `true`
 Whether or not to timestamp the packages, if set to true the current date/time will be included in the zip name, if false
  then the package name will be constant and consist of just the package name and version.
 
+##### options.include_version
+Type: `Boolean`
+Default value: `true`
+
+Whether or not to include the NPM package version in the artifact package name. Set to false if you'd prefer a static
+ package file name regardless of the version.
+
 ##### options.package_folder
 Type: `String`
 Default value: `./`
@@ -577,6 +584,8 @@ Adding more warnings for various failure cases
 * Add handler option to lambda_deploy task - [pull request by Rawbz](https://github.com/Tim-B/grunt-aws-lambda/pull/52)
 * Fix lambda_deploy config example - [pull request by pracucci](https://github.com/Tim-B/grunt-aws-lambda/pull/56)
 * Context object methods cleanup - [pull request by ubergoob](https://github.com/Tim-B/grunt-aws-lambda/pull/58), also fixes [issue 54](https://github.com/Tim-B/grunt-aws-lambda/issues/54)
+* When deploy_arn is not defined in the Gruntfile the value is undefined - [pull request by varunvairavan](https://github.com/Tim-B/grunt-aws-lambda/pull/60)
 * Extensive refactoring to improve testability and a new unit test suite
 * Bumped AWS SDK version to 2.2.32
 * Added support for versioning and aliases
+* Added support for excluding the package version from the package artifact name - based on [pull request by leecrossley](https://github.com/Tim-B/grunt-aws-lambda/pull/59)

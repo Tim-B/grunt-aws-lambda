@@ -27,6 +27,7 @@ packageTask.getHandler = function (grunt) {
         var options = this.options({
             'dist_folder': 'dist',
             'include_time': true,
+            'include_version': true,
             'package_folder': './',
             'include_files': []
         });
@@ -42,9 +43,13 @@ packageTask.getHandler = function (grunt) {
             time_string = dateFacade.getFormattedTimestamp(new Date());
         }
 
-        var file_version = pkg.version.replace(/\./g, '-');
-        var archive_name = pkg.name + '_' + file_version + '_' + time_string;
+        var archive_name = pkg.name;
 
+        if (options.include_version) {
+            archive_name += '_' + pkg.version.replace(/\./g, '-');
+        }
+
+        archive_name += '_' + time_string;
 
         npm.load([], function (err, npm) {
 

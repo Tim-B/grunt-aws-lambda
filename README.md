@@ -601,7 +601,7 @@ Adding more warnings for various failure cases
 * Adding optional files to contain JSON objects for clientContext and identity to be passed into the lambda_invoke command - [pull request by Skorch](https://github.com/Tim-B/grunt-aws-lambda/pull/51)
 * Add handler option to lambda_deploy task - [pull request by Rawbz](https://github.com/Tim-B/grunt-aws-lambda/pull/52)
 * Fix lambda_deploy config example - [pull request by pracucci](https://github.com/Tim-B/grunt-aws-lambda/pull/56)
-* Context object methods cleanup - [pull request by ubergoob](https://github.com/Tim-B/grunt-aws-lambda/pull/58)
+* Context object methods cleanup - [pull request by ubergoob](https://github.com/Tim-B/grunt-aws-lambda/pull/58), also fixes [issue 54](https://github.com/Tim-B/grunt-aws-lambda/issues/54)
 * Extensive refactoring to improve testability and a new unit test suite
 * Bumped AWS SDK version to 2.2.32
 * Added support for versioning and aliases

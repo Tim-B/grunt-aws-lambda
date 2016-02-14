@@ -118,6 +118,28 @@ invokeTaskTests.testDoneSucceed = function(test) {
     gruntMock.execute(invokeTask.getHandler, harnessParams);
 };
 
+invokeTaskTests.testDoneWithObjectStatus = function(test) {
+    test.expect(4);
+
+    setLambdaFunction(function(event, context) {
+        context.done(null, {some: "object"});
+    });
+
+    var invokeTask = require('../../utils/invoke_task');
+
+    var harnessParams = {
+        options: {},
+        callback: function(harness) {
+            test.equal(harness.status, true);
+            test.equal(harness.output.length, 5);
+            test.equal(harness.output[2], 'Success!  Message:');
+            test.equal(harness.output[4], '{"some":"object"}');
+            test.done();
+        }
+    };
+    gruntMock.execute(invokeTask.getHandler, harnessParams);
+};
+
 invokeTaskTests.testDoneUndefined = function(test) {
     test.expect(4);
 

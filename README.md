@@ -552,3 +552,4 @@ Adding more warnings for various failure cases
 * Fix lambda_deploy config example - [pull request by pracucci](https://github.com/Tim-B/grunt-aws-lambda/pull/56)
 * Context object methods cleanup - [pull request by ubergoob](https://github.com/Tim-B/grunt-aws-lambda/pull/58)
 * Extensive refactoring to improve testability and a new unit test suite
+* Bumped AWS SDK version to 2.2.32

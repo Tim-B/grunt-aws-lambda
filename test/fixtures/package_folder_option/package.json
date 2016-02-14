@@ -6,7 +6,5 @@
     "dependencies": {
     },
     "devDependencies": {
-    },
-    "bundledDependencies": [
-    ]
+    }
 }

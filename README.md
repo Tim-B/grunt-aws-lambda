@@ -41,26 +41,6 @@ dist
 
 [Read More](#default-options-1)
 
-### Include your dependencies in bundledDependencies
-
-npm packages which should be bundled with your lambda function must be included in the `bundledDependencies` of your
- `package.json`, for example:
-
-```json
-...
-"dependencies": {
-    "jquery": "2.1.1"
-},
-...
-"bundledDependencies": [
-    "jquery"
-]
-...
-```
-
-[Read More](#default-options-1)
-
-
 ## Authenticating to AWS
 
 This library supports providing credentials for AWS via an IAM Role, an AWS CLI profile, environment variables, a JSON file on disk, or passed in credentials.
@@ -170,9 +150,7 @@ Done, without errors.
 
 ### lambda_package
 
-This task generates a lambda package including npm dependencies using the default npm install functionality, therefore
- your dependencies must be included in the **bundledDependencies** section of your package.json to be included in the
- produced package.
+This task generates a lambda package including npm dependencies using the default npm install functionality.
 
 In your project's Gruntfile, add a section named `lambda_package` to the data object passed into `grunt.initConfig()`.
 
@@ -246,10 +224,7 @@ And the following in `package.json`
         "grunt": "0.4.*",
         "grunt-pack": "0.1.*",
         "grunt-aws-lambda": "0.1.*"
-    },
-    "bundledDependencies": [
-        "jquery"
-    ]
+    }
 }
 ```
 

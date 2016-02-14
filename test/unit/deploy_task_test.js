@@ -59,12 +59,14 @@ deployTaskTest.setUp = function(done) {
                 }
             }
         }),
-        updateFunctionConfiguration: sinon.stub().callsArgWithAsync(1, null, {
-
+        updateFunctionConfiguration: sinon.stub().callsArgWithAsync(1, null, {}),
+        updateFunctionCode: sinon.stub().callsArgWithAsync(1, null, {}),
+        publishVersion: sinon.stub().callsArgWithAsync(1, null, {
+            Version: 5
         }),
-        updateFunctionCode: sinon.stub().callsArgWithAsync(1, null, {
-
-        })
+        getAlias: sinon.stub().callsArgWithAsync(1, {statusCode: 404}, {}),
+        createAlias: sinon.stub().callsArgWithAsync(1, null, {}),
+        updateAlias: sinon.stub().callsArgWithAsync(1, null, {})
     };
 
     awsSDKMock = {
@@ -86,6 +88,11 @@ deployTaskTest.setUp = function(done) {
     fsMock.setFileContent('some-package.zip', 'abc123');
 
     mockery.registerMock('aws-sdk', awsSDKMock);
+
+    var dateFacadeMock = {
+        getHumanReadableTimestamp: sinon.stub().returns('Sat Feb 13 2016 21:46:15 GMT-0800 (PST)')
+    };
+    mockery.registerMock('./date_facade', dateFacadeMock);
 
     defaultGruntConfig = {
         'lambda_deploy.fake-target.function': 'some-function',
@@ -292,6 +299,108 @@ deployTaskTest.testHandler = function(test) {
             test.equal(harness.output[2], 'Config updated.');
 
             test.ok(lambdaAPIMock.updateFunctionConfiguration.calledWithMatch({Handler: 'some-handler'}));
+            test.done();
+        }
+    };
+    gruntMock.execute(deployTask.getHandler, harnessParams);
+};
+
+deployTaskTest.testEnableVersioning = function(test) {
+    test.expect(5);
+
+    var deployTask = require('../../utils/deploy_task');
+
+    var harnessParams = {
+        options: {
+            enableVersioning: true
+        },
+        config: defaultGruntConfig,
+        callback: function(harness) {
+            test.equal(harness.status, true);
+            test.equal(harness.output.length, 4);
+            test.equal(harness.output[2], 'No config updates to make.');
+            test.equal(harness.output[3], 'Version 5 published.');
+
+            test.ok(lambdaAPIMock.publishVersion.calledWithMatch({FunctionName: 'some-function',
+                Description: 'Deployed on Sat Feb 13 2016 21:46:15 GMT-0800 (PST)'}));
+            test.done();
+        }
+    };
+    gruntMock.execute(deployTask.getHandler, harnessParams);
+};
+
+deployTaskTest.testNewAlias = function(test) {
+    test.expect(6);
+
+    var deployTask = require('../../utils/deploy_task');
+
+    var harnessParams = {
+        options: {
+            alias: 'beta'
+        },
+        config: defaultGruntConfig,
+        callback: function(harness) {
+            test.equal(harness.status, true);
+            test.equal(harness.output.length, 4);
+            test.equal(harness.output[2], 'No config updates to make.');
+            test.equal(harness.output[3], 'Alias beta updated.');
+
+            test.ok(lambdaAPIMock.createAlias.calledWithMatch({FunctionName: 'some-function', Name: 'beta',
+                    FunctionVersion: '$LATEST', Description: 'Deployed on Sat Feb 13 2016 21:46:15 GMT-0800 (PST)'}));
+            test.ok(!lambdaAPIMock.updateAlias.called);
+            test.done();
+        }
+    };
+    gruntMock.execute(deployTask.getHandler, harnessParams);
+};
+
+deployTaskTest.testUpdatedAlias = function(test) {
+    test.expect(6);
+
+    lambdaAPIMock.getAlias = sinon.stub().callsArgWithAsync(1, null, {});
+
+    var deployTask = require('../../utils/deploy_task');
+
+    var harnessParams = {
+        options: {
+            alias: 'beta'
+        },
+        config: defaultGruntConfig,
+        callback: function(harness) {
+            test.equal(harness.status, true);
+            test.equal(harness.output.length, 4);
+            test.equal(harness.output[2], 'No config updates to make.');
+            test.equal(harness.output[3], 'Alias beta updated.');
+
+            test.ok(lambdaAPIMock.updateAlias.calledWithMatch({FunctionName: 'some-function', Name: 'beta',
+                FunctionVersion: '$LATEST', Description: 'Deployed on Sat Feb 13 2016 21:46:15 GMT-0800 (PST)'}));
+            test.ok(!lambdaAPIMock.createAlias.called);
+            test.done();
+        }
+    };
+    gruntMock.execute(deployTask.getHandler, harnessParams);
+};
+
+deployTaskTest.testAliasAndVersion = function(test) {
+    test.expect(6);
+
+    var deployTask = require('../../utils/deploy_task');
+
+    var harnessParams = {
+        options: {
+            alias: 'beta',
+            enableVersioning: true
+        },
+        config: defaultGruntConfig,
+        callback: function(harness) {
+            test.equal(harness.status, true);
+            test.equal(harness.output.length, 5);
+            test.equal(harness.output[2], 'No config updates to make.');
+            test.equal(harness.output[3], 'Version 5 published.');
+            test.equal(harness.output[4], 'Alias beta updated.');
+
+            test.ok(lambdaAPIMock.createAlias.calledWithMatch({FunctionName: 'some-function', Name: 'beta',
+                FunctionVersion: 5, Description: 'Deployed on Sat Feb 13 2016 21:46:15 GMT-0800 (PST)'}));
             test.done();
         }
     };

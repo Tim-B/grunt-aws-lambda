@@ -38,4 +38,9 @@ dateFacadeTest.testGetFormattedTimestamp = function(test) {
     test.done();
 };
 
+dateFacadeTest.testGetHumanReadableTimestamp = function(test) {
+    var fixedDate = new Date(2016, 1, 13, 14, 38, 13);
+    test.equal(dateFacade.getHumanReadableTimestamp(fixedDate), 'Sat Feb 13 2016 14:38:13 GMT-0800 (PST)');
+    test.done();
+};
 module.exports = dateFacadeTest;

@@ -11,7 +11,9 @@
 var path = require('path');
 var fs = require('fs');
 var AWS = require('aws-sdk');
+var Q = require('q');
 var arnParser = require('./arn_parser');
+var dateFacade = require('./date_facade');
 
 var deployTask = {};
 
@@ -30,7 +32,9 @@ deployTask.getHandler = function (grunt) {
             region: 'us-east-1',
             timeout: null,
             memory: null,
-            handler: null
+            handler: null,
+            enableVersioning: false,
+            alias: null
         });
 
         if (options.profile !== null) {
@@ -60,6 +64,9 @@ deployTask.getHandler = function (grunt) {
         var deploy_function = grunt.config.get('lambda_deploy.' + this.target + '.function');
         var deploy_arn = grunt.config.get('lambda_deploy.' + this.target + '.arn');
         var deploy_package = grunt.config.get('lambda_deploy.' + this.target + '.package');
+        var package_version = grunt.config.get('lambda_deploy.' + this.target + '.version');
+        var package_name = grunt.config.get('lambda_deploy.' + this.target + '.package_name');
+        var archive_name = grunt.config.get('lambda_deploy.' + this.target + '.archive_name');
 
         if (deploy_arn === null && deploy_function === null) {
             grunt.fail.warn('You must specify either an arn or a function name.');
@@ -79,6 +86,25 @@ deployTask.getHandler = function (grunt) {
             apiVersion: '2015-03-31'
         });
 
+        var getDeploymentDescription = function () {
+            var description = 'Deployed ';
+
+            if (package_name) {
+                description += 'package ' + package_name + ' ';
+            }
+            if (package_version) {
+                description += 'version ' + package_version + ' ';
+            }
+
+            description += 'on ' + dateFacade.getHumanReadableTimestamp(new Date());
+
+            if (archive_name) {
+                description += ' from artifact ' + archive_name;
+            }
+
+            return description;
+        };
+
         lambda.getFunction({FunctionName: deploy_function}, function (err, data) {
 
             if (err) {
@@ -92,6 +118,7 @@ deployTask.getHandler = function (grunt) {
 
             var current = data.Configuration;
             var configParams = {};
+            var version = '$LATEST';
 
 
             if (options.timeout !== null) {
@@ -106,21 +133,83 @@ deployTask.getHandler = function (grunt) {
                 configParams.Handler = options.handler;
             }
 
-            var updateConfig = function (func_name, func_options, callback) {
+            var updateConfig = function (func_name, func_options) {
+                var deferred = Q.defer();
                 if (Object.keys(func_options).length > 0) {
                     func_options.FunctionName = func_name;
                     lambda.updateFunctionConfiguration(func_options, function (err, data) {
                         if (err) {
                             grunt.fail.warn('Could not update config, check that values and permissions are valid');
+                            deferred.reject();
+                        } else {
+                            grunt.log.writeln('Config updated.');
+                            deferred.resolve();
                         }
-                        grunt.log.writeln('Config updated.');
-                        callback(data);
                     });
                 } else {
                     grunt.log.writeln('No config updates to make.');
-                    callback(false);
-                    return;
+                    deferred.resolve();
                 }
+                return deferred.promise;
+            };
+
+            var createVersion = function (func_name) {
+                var deferred = Q.defer();
+                if (options.enableVersioning) {
+                    lambda.publishVersion({FunctionName: func_name, Description: getDeploymentDescription()}, function (err, data) {
+                        if (err) {
+                            grunt.fail.warn('Publishing version for function ' + func_name + ' failed with message ' + err.message);
+                            deferred.reject();
+                        } else {
+                            version = data.Version;
+                            grunt.log.writeln('Version ' + version + ' published.');
+                            deferred.resolve();
+                        }
+                    });
+                } else {
+                    deferred.resolve();
+                }
+
+                return deferred.promise;
+            };
+
+            var createOrUpdateAlias = function (func_name) {
+                var deferred = Q.defer();
+
+                var params = {
+                    FunctionName: func_name,
+                    Name: options.alias
+                };
+
+                if (options.alias) {
+                    lambda.getAlias(params, function (err, data) {
+                        params.FunctionVersion = version;
+                        params.Description = getDeploymentDescription();
+                        var aliasFunction = 'updateAlias';
+                        if (err) {
+                            if (err.statusCode === 404) {
+                                aliasFunction = 'createAlias';
+                            } else {
+                                grunt.fail.warn('Listing aliases for ' + func_name + ' failed with message ' + err.message);
+                                deferred.reject();
+                                return;
+                            }
+                        }
+                        lambda[aliasFunction](params, function (err, data) {
+                            if (err) {
+                                grunt.fail.warn(aliasFunction + ' for ' + func_name + ' failed with message ' + err.message);
+                                deferred.reject();
+                            } else {
+                                grunt.log.writeln('Alias ' + options.alias + ' updated.');
+                                deferred.resolve();
+                            }
+                        });
+                    });
+                } else {
+                    deferred.resolve();
+                }
+
+                return deferred.promise;
             };
 
             grunt.log.writeln('Uploading...');
@@ -139,10 +228,17 @@ deployTask.getHandler = function (grunt) {
                     if (err) {
                         grunt.fail.warn('Package upload failed, check you have lambda:UpdateFunctionCode permissions.');
                     }
+
                     grunt.log.writeln('Package deployed.');
-                    updateConfig(deploy_function, configParams, function (data) {
-                        done(true);
-                    });
+
+                    updateConfig(deploy_function, configParams)
+                        .then(function () {return createVersion(deploy_function);})
+                        .then(function () {return createOrUpdateAlias(deploy_function);})
+                        .then(function () {
+                            done(true);
+                        }).catch(function (err) {
+                            grunt.fail.warn('Uncaught exception: ' + err.message);
+                        });
                 });
             });
         });

@@ -22,4 +22,8 @@ dateFacade.getFormattedTimestamp = function (dateObject) {
     return time_components.join('-');
 };
 
+dateFacade.getHumanReadableTimestamp = function (dateObject) {
+    return dateObject.toLocaleString();
+};
+
 module.exports = dateFacade;

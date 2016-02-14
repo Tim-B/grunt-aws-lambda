@@ -393,7 +393,20 @@ Sets the memory assigned to the function. If null then the current setting for t
 Type: `String`
 Default value: `null`
 
-Sets the handler for your lambda function. If left null, the current setting will remain unchanged. 
+Sets the handler for your lambda function. If left null, the current setting will remain unchanged.
+
+##### options.enableVersioning
+Type: `boolean`
+Default value: `false`
+
+When enabled each deployment creates a new version.
+
+##### options.alias
+Type: `String`
+Default value: `null`
+
+If not null then sets an alias for the deployed function. If versioning enabled then points to the created version,
+otherwise points to `$LATEST`.
 
 #### Usage Examples
 
@@ -427,6 +440,44 @@ grunt.initConfig({
         }
     }
 });
+```
+
+##### Example with a beta and prod deployment configuration
+
+Deploy to beta with `deploy` and to prod with `deploy_prod`:
+
+```js
+grunt.initConfig({
+    lambda_invoke: {
+        default: {
+        }
+    },
+    lambda_deploy: {
+        default: {
+            options: {
+                alias: 'beta',
+                enableVersioning: true
+            },
+            arn: 'arn:aws:lambda:us-east-1:123456789123:function:myfunction'
+        },
+        prod: {
+            options: {
+                alias: 'prod',
+                enableVersioning: true
+            },
+            arn: 'arn:aws:lambda:us-east-1:123456789123:function:myfunction'
+        }
+    },
+    lambda_package: {
+        default: {
+        },
+        prod: {
+        }
+    }
+});
+
+grunt.registerTask('deploy', ['lambda_package', 'lambda_deploy:default']);
+grunt.registerTask('deploy_prod', ['lambda_package', 'lambda_deploy:prod']);
 ```
 
 ## Misc info
@@ -553,3 +604,4 @@ Adding more warnings for various failure cases
 * Context object methods cleanup - [pull request by ubergoob](https://github.com/Tim-B/grunt-aws-lambda/pull/58)
 * Extensive refactoring to improve testability and a new unit test suite
 * Bumped AWS SDK version to 2.2.32
+* Added support for versioning and aliases

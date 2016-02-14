@@ -226,7 +226,7 @@ deployTask.getHandler = function (grunt) {
 
                 lambda.updateFunctionCode(codeParams, function (err, data) {
                     if (err) {
-                        grunt.fail.warn('Package upload failed, check you have lambda:UpdateFunctionCode permissions.');
+                        grunt.fail.warn('Package upload failed, check you have lambda:UpdateFunctionCode permissions and that your package is not too big to upload.');
                     }
 
                     grunt.log.writeln('Package deployed.');

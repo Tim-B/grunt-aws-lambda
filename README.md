@@ -390,6 +390,17 @@ Default value: `null`
 If not null then sets an alias for the deployed function. If versioning enabled then points to the created version,
 otherwise points to `$LATEST`.
 
+It is recommended that `enableVersioning` is also enabled when using this feature.
+
+##### options.enablePackageVersionAlias
+Type: `boolean`
+Default value: false
+
+When enabled creates a second alias using the NPM package version. When the NPM package version is bumped a new
+alias will be created, allowing you to keep the old alias available for backward compatibility.
+
+It is recommended that `enableVersioning` is also enabled when using this feature.
+
 #### Usage Examples
 
 ##### Default Options

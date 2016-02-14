@@ -343,7 +343,7 @@ deployTaskTest.testNewAlias = function(test) {
             test.equal(harness.status, true);
             test.equal(harness.output.length, 4);
             test.equal(harness.output[2], 'No config updates to make.');
-            test.equal(harness.output[3], 'Alias beta updated.');
+            test.equal(harness.output[3], 'Alias beta updated pointing to version $LATEST.');
 
             test.ok(lambdaAPIMock.createAlias.calledWithMatch({FunctionName: 'some-function', Name: 'beta',
                     FunctionVersion: '$LATEST', Description: 'Deployed on Sat Feb 13 2016 21:46:15 GMT-0800 (PST)'}));
@@ -370,7 +370,7 @@ deployTaskTest.testUpdatedAlias = function(test) {
             test.equal(harness.status, true);
             test.equal(harness.output.length, 4);
             test.equal(harness.output[2], 'No config updates to make.');
-            test.equal(harness.output[3], 'Alias beta updated.');
+            test.equal(harness.output[3], 'Alias beta updated pointing to version $LATEST.');
 
             test.ok(lambdaAPIMock.updateAlias.calledWithMatch({FunctionName: 'some-function', Name: 'beta',
                 FunctionVersion: '$LATEST', Description: 'Deployed on Sat Feb 13 2016 21:46:15 GMT-0800 (PST)'}));
@@ -397,10 +397,37 @@ deployTaskTest.testAliasAndVersion = function(test) {
             test.equal(harness.output.length, 5);
             test.equal(harness.output[2], 'No config updates to make.');
             test.equal(harness.output[3], 'Version 5 published.');
-            test.equal(harness.output[4], 'Alias beta updated.');
+            test.equal(harness.output[4], 'Alias beta updated pointing to version 5.');
 
             test.ok(lambdaAPIMock.createAlias.calledWithMatch({FunctionName: 'some-function', Name: 'beta',
                 FunctionVersion: 5, Description: 'Deployed on Sat Feb 13 2016 21:46:15 GMT-0800 (PST)'}));
+            test.done();
+        }
+    };
+    gruntMock.execute(deployTask.getHandler, harnessParams);
+};
+
+deployTaskTest.testEnablePackageVersionAlias = function(test) {
+    test.expect(6);
+
+    var deployTask = require('../../utils/deploy_task');
+
+    defaultGruntConfig['lambda_deploy.fake-target.version'] = '1.2.3';
+
+    var harnessParams = {
+        options: {
+            enablePackageVersionAlias: true
+        },
+        config: defaultGruntConfig,
+        callback: function(harness) {
+            test.equal(harness.status, true);
+            test.equal(harness.output.length, 4);
+            test.equal(harness.output[2], 'No config updates to make.');
+            test.equal(harness.output[3], 'Alias 1-2-3 updated pointing to version $LATEST.');
+
+            test.ok(lambdaAPIMock.createAlias.calledWithMatch({FunctionName: 'some-function', Name: '1-2-3',
+                FunctionVersion: '$LATEST', Description: 'Deployed version 1.2.3 on Sat Feb 13 2016 21:46:15 GMT-0800 (PST)'}));
+            test.ok(!lambdaAPIMock.updateAlias.called);
             test.done();
         }
     };

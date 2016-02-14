@@ -34,7 +34,8 @@ deployTask.getHandler = function (grunt) {
             memory: null,
             handler: null,
             enableVersioning: false,
-            alias: null
+            alias: null,
+            enablePackageVersionAlias: false
         });
 
         if (options.profile !== null) {
@@ -173,43 +174,52 @@ deployTask.getHandler = function (grunt) {
                 return deferred.promise;
             };
 
-            var createOrUpdateAlias = function (func_name) {
+            var createOrUpdateAlias = function (func_name, set_alias) {
                 var deferred = Q.defer();
 
                 var params = {
                     FunctionName: func_name,
-                    Name: options.alias
+                    Name: set_alias
                 };
 
-                if (options.alias) {
-                    lambda.getAlias(params, function (err, data) {
-                        params.FunctionVersion = version;
-                        params.Description = getDeploymentDescription();
-                        var aliasFunction = 'updateAlias';
-                        if (err) {
-                            if (err.statusCode === 404) {
-                                aliasFunction = 'createAlias';
-                            } else {
-                                grunt.fail.warn('Listing aliases for ' + func_name + ' failed with message ' + err.message);
-                                deferred.reject();
-                                return;
-                            }
+
+                lambda.getAlias(params, function (err, data) {
+                    params.FunctionVersion = version;
+                    params.Description = getDeploymentDescription();
+                    var aliasFunction = 'updateAlias';
+                    if (err) {
+                        if (err.statusCode === 404) {
+                            aliasFunction = 'createAlias';
+                        } else {
+                            grunt.fail.warn('Listing aliases for ' + func_name + ' failed with message ' + err.message);
+                            deferred.reject();
+                            return;
                         }
-                        lambda[aliasFunction](params, function (err, data) {
-                            if (err) {
-                                grunt.fail.warn(aliasFunction + ' for ' + func_name + ' failed with message ' + err.message);
-                                deferred.reject();
-                            } else {
-                                grunt.log.writeln('Alias ' + options.alias + ' updated.');
-                                deferred.resolve();
-                            }
-                        });
+                    }
+                    lambda[aliasFunction](params, function (err, data) {
+                        if (err) {
+                            grunt.fail.warn(aliasFunction + ' for ' + func_name + ' failed with message ' + err.message);
+                            deferred.reject();
+                        } else {
+                            grunt.log.writeln('Alias ' + set_alias + ' updated pointing to version ' + version + '.');
+                            deferred.resolve();
+                        }
                     });
-                } else {
-                    deferred.resolve();
-                }
+                });
 
                 return deferred.promise;
+            };
+
+            var setAlias = function (func_name) {
+                if (options.alias) {
+                    return createOrUpdateAlias(func_name, options.alias);
+                }
+            };
+
+            var setPackageVersionAlias = function (func_name) {
+                if (options.enablePackageVersionAlias && package_version) {
+                    return createOrUpdateAlias(func_name, package_version.replace(/\./g, '-'));
+                }
             };
 
             grunt.log.writeln('Uploading...');
@@ -233,7 +243,8 @@ deployTask.getHandler = function (grunt) {
 
                     updateConfig(deploy_function, configParams)
                         .then(function () {return createVersion(deploy_function);})
-                        .then(function () {return createOrUpdateAlias(deploy_function);})
+                        .then(function () {return setAlias(deploy_function);})
+                        .then(function () {return setPackageVersionAlias(deploy_function);})
                         .then(function () {
                             done(true);
                         }).catch(function (err) {

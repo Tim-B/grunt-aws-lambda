@@ -40,7 +40,7 @@ dateFacadeTest.testGetFormattedTimestamp = function(test) {
 
 dateFacadeTest.testGetHumanReadableTimestamp = function(test) {
     var fixedDate = new Date(2016, 1, 13, 14, 38, 13);
-    test.equal(dateFacade.getHumanReadableTimestamp(fixedDate), 'Sat Feb 13 2016 14:38:13 GMT-0800 (PST)');
+    test.ok(dateFacade.getHumanReadableTimestamp(fixedDate).indexOf('Sat Feb 13 2016 14:38:13') > -1);
     test.done();
 };
 module.exports = dateFacadeTest;

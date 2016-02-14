@@ -514,7 +514,11 @@ It is recommended that the following policy be applied to the user:
         "lambda:GetFunction",
         "lambda:UploadFunction",
         "lambda:UpdateFunctionCode",
-        "lambda:UpdateFunctionConfiguration"
+        "lambda:UpdateFunctionConfiguration",
+        "lambda:GetAlias",
+        "lambda:UpdateAlias",
+        "lambda:CreateAlias",
+        "lambda:PublishVersion"
       ],
       "Effect": "Allow",
       "Resource": "arn:aws:lambda:*"

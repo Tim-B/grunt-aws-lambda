@@ -34,7 +34,7 @@ deployTask.getHandler = function (grunt) {
             memory: null,
             handler: null,
             enableVersioning: false,
-            alias: null,
+            aliases: null,
             enablePackageVersionAlias: false
         });
 
@@ -61,6 +61,10 @@ deployTask.getHandler = function (grunt) {
         }
 
         AWS.config.update({region: options.region});
+
+        if (typeof options.aliases === 'string') {
+            options.aliases = [options.aliases];
+        }
 
         var deploy_function = grunt.config.get('lambda_deploy.' + this.target + '.function');
         var deploy_arn = grunt.config.get('lambda_deploy.' + this.target + '.arn');
@@ -210,9 +214,13 @@ deployTask.getHandler = function (grunt) {
                 return deferred.promise;
             };
 
-            var setAlias = function (func_name) {
-                if (options.alias) {
-                    return createOrUpdateAlias(func_name, options.alias);
+            var setAliases = function (func_name) {
+                if (options.aliases) {
+                    var promises = [];
+                    options.aliases.forEach(function (alias) {
+                        promises.push(createOrUpdateAlias(func_name, alias));
+                    });
+                    return Q.all(promises);
                 }
             };
 
@@ -243,7 +251,7 @@ deployTask.getHandler = function (grunt) {
 
                     updateConfig(deploy_function, configParams)
                         .then(function () {return createVersion(deploy_function);})
-                        .then(function () {return setAlias(deploy_function);})
+                        .then(function () {return setAliases(deploy_function);})
                         .then(function () {return setPackageVersionAlias(deploy_function);})
                         .then(function () {
                             done(true);

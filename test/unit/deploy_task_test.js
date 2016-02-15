@@ -336,7 +336,7 @@ deployTaskTest.testNewAlias = function(test) {
 
     var harnessParams = {
         options: {
-            alias: 'beta'
+            aliases: 'beta'
         },
         config: defaultGruntConfig,
         callback: function(harness) {
@@ -363,7 +363,7 @@ deployTaskTest.testUpdatedAlias = function(test) {
 
     var harnessParams = {
         options: {
-            alias: 'beta'
+            aliases: 'beta'
         },
         config: defaultGruntConfig,
         callback: function(harness) {
@@ -388,7 +388,7 @@ deployTaskTest.testAliasAndVersion = function(test) {
 
     var harnessParams = {
         options: {
-            alias: 'beta',
+            aliases: 'beta',
             enableVersioning: true
         },
         config: defaultGruntConfig,
@@ -428,6 +428,40 @@ deployTaskTest.testEnablePackageVersionAlias = function(test) {
             test.ok(lambdaAPIMock.createAlias.calledWithMatch({FunctionName: 'some-function', Name: '1-2-3',
                 FunctionVersion: '$LATEST', Description: 'Deployed version 1.2.3 on Sat Feb 13 2016 21:46:15 GMT-0800 (PST)'}));
             test.ok(!lambdaAPIMock.updateAlias.called);
+            test.done();
+        }
+    };
+    gruntMock.execute(deployTask.getHandler, harnessParams);
+};
+
+deployTaskTest.testMultipleAliases = function(test) {
+    test.expect(9);
+
+    var deployTask = require('../../utils/deploy_task');
+
+    var harnessParams = {
+        options: {
+            aliases: [
+                'foo',
+                'bar',
+                'baz'
+            ]
+        },
+        config: defaultGruntConfig,
+        callback: function(harness) {
+            test.equal(harness.status, true);
+            test.equal(harness.output.length, 6);
+            test.equal(harness.output[2], 'No config updates to make.');
+            test.equal(harness.output[3], 'Alias foo updated pointing to version $LATEST.');
+            test.equal(harness.output[4], 'Alias bar updated pointing to version $LATEST.');
+            test.equal(harness.output[5], 'Alias baz updated pointing to version $LATEST.');
+
+            test.ok(lambdaAPIMock.createAlias.calledWithMatch({FunctionName: 'some-function', Name: 'foo',
+                FunctionVersion: '$LATEST', Description: 'Deployed on Sat Feb 13 2016 21:46:15 GMT-0800 (PST)'}));
+            test.ok(lambdaAPIMock.createAlias.calledWithMatch({FunctionName: 'some-function', Name: 'bar',
+                FunctionVersion: '$LATEST', Description: 'Deployed on Sat Feb 13 2016 21:46:15 GMT-0800 (PST)'}));
+            test.ok(lambdaAPIMock.createAlias.calledWithMatch({FunctionName: 'some-function', Name: 'baz',
+                FunctionVersion: '$LATEST', Description: 'Deployed on Sat Feb 13 2016 21:46:15 GMT-0800 (PST)'}));
             test.done();
         }
     };

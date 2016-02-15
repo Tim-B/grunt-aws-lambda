@@ -383,14 +383,29 @@ Default value: `false`
 
 When enabled each deployment creates a new version.
 
-##### options.alias
-Type: `String`
+##### options.aliases
+Type: `String` or `Array`
 Default value: `null`
 
-If not null then sets an alias for the deployed function. If versioning enabled then points to the created version,
+If a string or an array of strings then creates these aliases. If versioning enabled then points to the created version,
 otherwise points to `$LATEST`.
 
 It is recommended that `enableVersioning` is also enabled when using this feature.
+
+Examples:
+
+Creates one `beta` alias:
+```js
+aliases: 'beta'
+```
+
+Creates two aliases, `alias1` and `alias2`:
+```js
+aliases: [
+    'alias1',
+    'alias2'
+]
+```
 
 ##### options.enablePackageVersionAlias
 Type: `boolean`
@@ -448,14 +463,14 @@ grunt.initConfig({
     lambda_deploy: {
         default: {
             options: {
-                alias: 'beta',
+                aliases: 'beta',
                 enableVersioning: true
             },
             arn: 'arn:aws:lambda:us-east-1:123456789123:function:myfunction'
         },
         prod: {
             options: {
-                alias: 'prod',
+                aliases: 'prod',
                 enableVersioning: true
             },
             arn: 'arn:aws:lambda:us-east-1:123456789123:function:myfunction'

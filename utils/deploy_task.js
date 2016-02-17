@@ -17,6 +17,8 @@ var dateFacade = require('./date_facade');
 
 var deployTask = {};
 
+var proxy = require('proxy-agent');
+
 deployTask.getHandler = function (grunt) {
 
     return function () {
@@ -37,11 +39,18 @@ deployTask.getHandler = function (grunt) {
             aliases: null,
             enablePackageVersionAlias: false
         });
-
+	
         if (options.profile !== null) {
             var credentials = new AWS.SharedIniFileCredentials({profile: options.profile});
             AWS.config.credentials = credentials;
         }
+
+	//Adding proxy if exists
+	if(process.env.https_proxy != "") {
+	    AWS.config.update({
+	        httpOptions: { agent: proxy(process.env.https_proxy) }
+	    });
+	}
 
         if (options.RoleArn !== null) {
             AWS.config.credentials = new AWS.EC2MetadataCredentials({

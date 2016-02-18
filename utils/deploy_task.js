@@ -45,12 +45,12 @@ deployTask.getHandler = function (grunt) {
             AWS.config.credentials = credentials;
         }
 
-	//Adding proxy if exists
-	if(process.env.https_proxy != "") {
-	    AWS.config.update({
-	        httpOptions: { agent: proxy(process.env.https_proxy) }
-	    });
-	}
+        //Adding proxy if exists
+        if(process.env.https_proxy !== "") {
+            AWS.config.update({
+                httpOptions: { agent: proxy(process.env.https_proxy) }
+            });
+        }
 
         if (options.RoleArn !== null) {
             AWS.config.credentials = new AWS.EC2MetadataCredentials({

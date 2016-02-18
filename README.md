@@ -291,6 +291,11 @@ Default value: None - Required (if you havn't specified an ARN)
 
 *This option is deprecated, use arn instead*. The name of your target Lambda function, ie. the name of the function in the AWS console.
 
+##### Proxy
+On Linux based hosts you can set proxy server for deploy task by specifying standard environment variable - https_proxy.
+E.g: 
+env https_proxy=http://localhost:8080 grunt deploy
+
 ##### package
 Type: `String`
 Default value: Package name set by package task of same target - see below.

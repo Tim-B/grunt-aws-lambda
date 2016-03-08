@@ -43,7 +43,7 @@ packageTask.getHandler = function (grunt) {
             time_string = dateFacade.getFormattedTimestamp(new Date());
         }
 
-        var archive_name = pkg.name;
+        var archive_name = pkg.name.replace(/\//g, '-');
 
         if (options.include_version) {
             archive_name += '_' + pkg.version.replace(/\./g, '-');

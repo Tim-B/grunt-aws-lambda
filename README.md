@@ -416,6 +416,20 @@ alias will be created, allowing you to keep the old alias available for backward
 
 It is recommended that `enableVersioning` is also enabled when using this feature.
 
+##### options.subnetIds
+Type: `Array`
+Default value: `null`
+
+A list of one or more subnet IDs in your VPC.
+
+##### options.securityGroupIds
+Type: `Array`
+Default value: `null`
+
+A list of one or more security groups IDs in your VPC.
+
+If your Lambda function accesses resources in a VPC you must provide at least one security group and one subnet ID. These must belong to the same VPC
+
 #### Usage Examples
 
 ##### Default Options

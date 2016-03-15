@@ -283,6 +283,32 @@ deployTaskTest.testMemorySize = function(test) {
     gruntMock.execute(deployTask.getHandler, harnessParams);
 };
 
+deployTaskTest.testVpcConfig = function(test) {
+    test.expect(4);
+
+    var deployTask = require('../../utils/deploy_task');
+
+    var harnessParams = {
+        options: {
+            subnetIds: ['subnet-XXXXX'],
+            securityGroupIds: ['sg-XXXXXX']
+        },
+        config: defaultGruntConfig,
+        callback: function(harness) {
+            test.equal(harness.status, true);
+            test.equal(harness.output.length, 3);
+            test.equal(harness.output[2], 'Config updated.');
+
+            test.ok(lambdaAPIMock.updateFunctionConfiguration.calledWithMatch({VpcConfig: {
+              SubnetIds : ['subnet-XXXXX'],
+              SecurityGroupIds : ['sg-XXXXXX']
+            }}));
+            test.done();
+        }
+    };
+    gruntMock.execute(deployTask.getHandler, harnessParams);
+};
+
 deployTaskTest.testHandler = function(test) {
     test.expect(4);
 

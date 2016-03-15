@@ -35,7 +35,9 @@ deployTask.getHandler = function (grunt) {
             handler: null,
             enableVersioning: false,
             aliases: null,
-            enablePackageVersionAlias: false
+            enablePackageVersionAlias: false,
+            subnetIds: null,
+            securityGroupIds: null
         });
 
         if (options.profile !== null) {
@@ -136,6 +138,13 @@ deployTask.getHandler = function (grunt) {
 
             if (options.handler !== null) {
                 configParams.Handler = options.handler;
+            }
+
+            if (options.subnetIds !== null && options.securityGroupIds !== null) {
+               configParams.VpcConfig = {
+                 SubnetIds : options.subnetIds,
+                 SecurityGroupIds : options.securityGroupIds
+               };
             }
 
             var updateConfig = function (func_name, func_options) {

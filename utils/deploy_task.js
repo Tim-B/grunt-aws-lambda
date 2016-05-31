@@ -48,7 +48,7 @@ deployTask.getHandler = function (grunt) {
         }
 
         //Adding proxy if exists
-        if(process.env.https_proxy !== "") {
+        if(process.env.https_proxy !== undefined) {
             AWS.config.update({
                 httpOptions: { agent: proxy(process.env.https_proxy) }
             });

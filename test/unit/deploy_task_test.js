@@ -104,6 +104,8 @@ deployTaskTest.setUp = function(done) {
         'lambda_deploy.fake-target.package': './dist/some-package.zip'
     };
 
+    delete process.env.https_proxy;
+
     done();
 };
 
@@ -141,8 +143,7 @@ deployTaskTest.testDeployUsingProxy = function(test) {
     test.expect(6);
 
     var deployTask = require('../../utils/deploy_task');
-    
-    
+
     var proxy = 'http://localhost:8080';
     process.env.https_proxy = proxy;
 
@@ -157,6 +158,29 @@ deployTaskTest.testDeployUsingProxy = function(test) {
             test.equal(harness.output[2], 'No config updates to make.');
 
             test.ok(proxyAgentMock.calledWith(proxy));
+            test.done();
+        }
+    };
+
+    gruntMock.execute(deployTask.getHandler, harnessParams);
+};
+
+deployTaskTest.testDeployWithoutProxy = function(test) {
+    test.expect(6);
+
+    var deployTask = require('../../utils/deploy_task');
+
+    var harnessParams = {
+        options: {},
+        config: defaultGruntConfig,
+        callback: function(harness) {
+            test.equal(harness.status, true);
+            test.equal(harness.output.length, 3);
+            test.equal(harness.output[0], 'Uploading...');
+            test.equal(harness.output[1], 'Package deployed.');
+            test.equal(harness.output[2], 'No config updates to make.');
+
+            test.ok(!proxyAgentMock.called);
             test.done();
         }
     };

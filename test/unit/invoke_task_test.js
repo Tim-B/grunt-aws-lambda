@@ -447,4 +447,94 @@ invokeTaskTests.testNoIdentity = function(test) {
     gruntMock.execute(invokeTask.getHandler, harnessParams);
 };
 
+invokeTaskTests.testCallbackSucceed = function(test) {
+    test.expect(4);
+
+    setLambdaFunction(function(event, context, callback) {
+        callback(null, 'My Message');
+    });
+
+    var invokeTask = require('../../utils/invoke_task');
+    var harnessParams = {
+        options: {},
+        callback: function(harness) {
+            test.equal(harness.status, true);
+            test.equal(harness.output.length, 5);
+            test.equal(harness.output[2], 'Success!  Message:');
+            test.equal(harness.output[4], 'My Message');
+            test.done();
+        }
+    };
+    gruntMock.execute(invokeTask.getHandler, harnessParams);
+};
+
+invokeTaskTests.testCallbackWithObjectStatus = function(test) {
+    test.expect(4);
+
+    setLambdaFunction(function(event, context, callback) {
+        callback(null, {some: "object"});
+    });
+
+    var invokeTask = require('../../utils/invoke_task');
+
+    var harnessParams = {
+        options: {},
+        callback: function(harness) {
+            test.equal(harness.status, true);
+            test.equal(harness.output.length, 5);
+            test.equal(harness.output[2], 'Success!  Message:');
+            test.equal(harness.output[4], '{"some":"object"}');
+            test.done();
+        }
+    };
+    gruntMock.execute(invokeTask.getHandler, harnessParams);
+};
+
+invokeTaskTests.testCallbackUndefined = function(test) {
+    test.expect(4);
+
+    setLambdaFunction(function(event, context, callback) {
+        var notDefined;
+        callback(notDefined, 'My Message');
+    });
+
+    var invokeTask = require('../../utils/invoke_task');
+
+    var harnessParams = {
+        options: {},
+        callback: function(harness) {
+            test.equal(harness.status, true);
+            test.equal(harness.output.length, 5);
+            test.equal(harness.output[2], 'Success!  Message:');
+            test.equal(harness.output[4], 'My Message');
+            test.done();
+        }
+    };
+    gruntMock.execute(invokeTask.getHandler, harnessParams);
+};
+
+invokeTaskTests.testCallbackError = function(test) {
+    test.expect(4);
+
+    setLambdaFunction(function(event, context, callback) {
+        var error = {message: 'Some Error'};
+        callback(error, 'My Message');
+    });
+
+    var invokeTask = require('../../utils/invoke_task');
+
+    var harnessParams = {
+        options: {},
+        callback: function(harness) {
+            test.equal(harness.status, false);
+            test.equal(harness.output.length, 5);
+            test.equal(harness.output[2], 'Failure!  Message:');
+            test.equal(harness.output[4], '{"message":"Some Error"}');
+            test.done();
+        }
+    };
+    gruntMock.execute(invokeTask.getHandler, harnessParams);
+};
+
+
 module.exports = invokeTaskTests;

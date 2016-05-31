@@ -40,7 +40,8 @@ var deployTaskTest = {};
 
 var awsSDKMock,
     lambdaAPIMock,
-    defaultGruntConfig;
+    defaultGruntConfig,
+    proxyAgentMock;
 
 deployTaskTest.setUp = function(done) {
     mockery.enable({
@@ -81,6 +82,8 @@ deployTaskTest.setUp = function(done) {
             return lambdaAPIMock;
         }
     };
+    
+    proxyAgentMock = sinon.spy();
 
     fsMock.reset();
     mockery.registerMock('fs', fsMock);
@@ -88,6 +91,8 @@ deployTaskTest.setUp = function(done) {
     fsMock.setFileContent('some-package.zip', 'abc123');
 
     mockery.registerMock('aws-sdk', awsSDKMock);
+    
+    mockery.registerMock('proxy-agent', proxyAgentMock);
 
     var dateFacadeMock = {
         getHumanReadableTimestamp: sinon.stub().returns('Sat Feb 13 2016 21:46:15 GMT-0800 (PST)')
@@ -129,6 +134,33 @@ deployTaskTest.testDeploySucceed = function(test) {
             test.done();
         }
     };
+    gruntMock.execute(deployTask.getHandler, harnessParams);
+};
+
+deployTaskTest.testDeployUsingProxy = function(test) {
+    test.expect(6);
+
+    var deployTask = require('../../utils/deploy_task');
+    
+    
+    var proxy = 'http://localhost:8080';
+    process.env.https_proxy = proxy;
+
+    var harnessParams = {
+        options: {},
+        config: defaultGruntConfig,
+        callback: function(harness) {
+            test.equal(harness.status, true);
+            test.equal(harness.output.length, 3);
+            test.equal(harness.output[0], 'Uploading...');
+            test.equal(harness.output[1], 'Package deployed.');
+            test.equal(harness.output[2], 'No config updates to make.');
+
+            test.ok(proxyAgentMock.calledWith(proxy));
+            test.done();
+        }
+    };
+
     gruntMock.execute(deployTask.getHandler, harnessParams);
 };
 

@@ -638,3 +638,9 @@ Adding more warnings for various failure cases
 * Bumped AWS SDK version to 2.2.32
 * Added support for versioning and aliases
 * Added support for excluding the package version from the package artifact name - based on [pull request by leecrossley](https://github.com/Tim-B/grunt-aws-lambda/pull/59)
+
+### 0.13.0
+
+* Added support for Node 4.3 runtime callback function - [pull request by bobhigs](https://github.com/Tim-B/grunt-aws-lambda/pull/76)
+* Added VPC support - [pull request by beeva-arturomartinez](https://github.com/Tim-B/grunt-aws-lambda/pull/71)
+* Added local proxy support - [pull request by alekstr](https://github.com/Tim-B/grunt-aws-lambda/pull/66)

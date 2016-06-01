@@ -174,6 +174,14 @@ Default value: `[]`
 
 List of files to explicitly include in the package, even if they would be ignored by NPM
 
+##### options.include_files_mapped
+Type: `Object`
+Default value: `{}`
+
+Mapping of files to explicitly include in the package, even if they would be ignored by NPM.
+The object contains the source as a key and the destination in the zip archive as value.
+This is for example useful when using different environment configurations.
+
 ##### options.include_time
 Type: `Boolean`
 Default value: `true`

@@ -29,7 +29,8 @@ packageTask.getHandler = function (grunt) {
             'include_time': true,
             'include_version': true,
             'package_folder': './',
-            'include_files': []
+            'include_files': [],
+            'include_files_mapped': {}
         });
 
         var pkg = JSON.parse(fs.readFileSync(path.resolve(options.package_folder + '/package.json'), "utf8"));
@@ -95,6 +96,13 @@ packageTask.getHandler = function (grunt) {
                             cwd: options.package_folder
                         }
                     ]);
+                }
+
+                if (Object.keys(options.include_files_mapped).length !== 0) {
+                    // maps: src -> destination
+                    Object.keys(options.include_files_mapped).forEach(function (src) {
+                        zipArchive.append(src, {name: options.include_files_mapped[src]});
+                    });
                 }
 
                 zipArchive.finalize();

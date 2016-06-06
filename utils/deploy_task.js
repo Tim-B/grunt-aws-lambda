@@ -71,8 +71,6 @@ deployTask.getHandler = function (grunt) {
             AWS.config.loadFromPath(options.credentialsJSON);
         }
 
-        AWS.config.update({region: options.region});
-
         if (typeof options.aliases === 'string') {
             options.aliases = [options.aliases];
         }
@@ -95,6 +93,8 @@ deployTask.getHandler = function (grunt) {
                 options.region = functionInfo.region;
             }
         }
+
+        AWS.config.update({region: options.region});
 
         var done = this.async();
 

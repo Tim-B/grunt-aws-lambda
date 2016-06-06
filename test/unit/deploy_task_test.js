@@ -295,6 +295,32 @@ deployTaskTest.testRegion = function(test) {
     gruntMock.execute(deployTask.getHandler, harnessParams);
 };
 
+deployTaskTest.testFunctionArn = function(test) {
+    test.expect(4);
+
+    var deployTask = require('../../utils/deploy_task');
+
+    var functionArn = 'arn:aws:lambda:us-west-2:123456789012:function:MyFunctionName';
+    var configWithArn = {
+        'lambda_deploy.fake-target.package': './dist/some-package.zip',
+        'lambda_deploy.fake-target.arn': functionArn
+    };
+
+    var harnessParams = {
+        options: {},
+        config: configWithArn,
+        callback: function(harness) {
+            test.equal(harness.status, true);
+            test.equal(harness.output.length, 3);
+
+            test.ok(awsSDKMock.config.update.calledWith({region: 'us-west-2'}));
+            test.ok(lambdaAPIMock.getFunction.calledWith({FunctionName: functionArn}));
+            test.done();
+        }
+    };
+    gruntMock.execute(deployTask.getHandler, harnessParams);
+};
+
 deployTaskTest.testTimeout = function(test) {
     test.expect(4);
 

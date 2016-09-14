@@ -75,7 +75,7 @@ invokeTask.getHandler = function (grunt) {
                     process.chdir(cwd);
                 }
                 grunt.log.writeln("");
-                var header = (options.expect_fail ? "Unexpected " : "") + "Success!  Message:"
+                var header = (options.expect_fail ? "Unexpected" : "Expected") + " Success!  Message:"
                 grunt.log.writeln(header);
                 grunt.log.writeln(grunt.repeat(header.length, "-"));
                 var msg = (typeof(result) === 'object') ? JSON.stringify(result, 2) : result;
@@ -87,7 +87,7 @@ invokeTask.getHandler = function (grunt) {
                     process.chdir(cwd);
                 }
                 grunt.log.writeln("");
-                var header = (options.expect_fail ? "Expected " : "") + "Failure!  Message:"
+                var header = (options.expect_fail ? "Expected" : "Unexpected") + " Failure!  Message:"
                 grunt.log.writeln(header);
                 grunt.log.writeln(grunt.repeat(header.length, "-"));
                 var msg = (typeof(error) === 'object') ? JSON.stringify(error, 2) : error;

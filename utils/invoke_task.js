@@ -27,7 +27,8 @@ invokeTask.getHandler = function (grunt) {
             'file_name': 'index.js',
             'event': 'event.json',
             'client_context': 'client_context.json',
-            'identity': 'identity.json'
+            'identity': 'identity.json',
+            'expect_fail': false
         });
 
         grunt.log.writeln("");
@@ -74,22 +75,24 @@ invokeTask.getHandler = function (grunt) {
                     process.chdir(cwd);
                 }
                 grunt.log.writeln("");
-                grunt.log.writeln("Success!  Message:");
-                grunt.log.writeln("------------------");
-                var msg = (typeof(result) === 'object') ? JSON.stringify(result) : result;
+                var header = (options.expect_fail ? "Unexpected " : "") + "Success!  Message:"
+                grunt.log.writeln(header);
+                grunt.log.writeln(grunt.repeat(header.length, "-"));
+                var msg = (typeof(result) === 'object') ? JSON.stringify(result, 2) : result;
                 grunt.log.writeln((typeof(result) !== 'undefined') ? msg : "Successful!");
-                done(true);
+                done(true && !options.expect_fail);
             },
             fail: function (error) {
                 if (cwd) {
                     process.chdir(cwd);
                 }
                 grunt.log.writeln("");
-                grunt.log.writeln("Failure!  Message:");
-                grunt.log.writeln("------------------");
-                var msg = (typeof(error) === 'object') ? JSON.stringify(error) : error;
+                var header = (options.expect_fail ? "Expected " : "") + "Failure!  Message:"
+                grunt.log.writeln(header);
+                grunt.log.writeln(grunt.repeat(header.length, "-"));
+                var msg = (typeof(error) === 'object') ? JSON.stringify(error, 2) : error;
                 grunt.log.writeln((typeof(error) !== 'undefined') ? msg : "Error not provided.");
-                done(false);
+                done(false || options.expect_fail);
             },
             awsRequestId: 'LAMBDA_INVOKE',
             logStreamName: 'LAMBDA_INVOKE',

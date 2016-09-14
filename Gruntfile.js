@@ -53,6 +53,21 @@ module.exports = function (grunt) {
                     handler: 'myfunction'
                 }
             },
+            expected_failure_options: {
+                options: {
+                    file_name: 'test/fixtures/failing_index.js',
+                    event: 'test/fixtures/event.json',
+                    handler: 'myfunction',
+                    expect_fail: true
+                }
+            },
+            unexpected_success_options: {
+                options: {
+                    file_name: 'test/fixtures/index.js',
+                    event: 'test/fixtures/event.json',
+                    expect_fail: true
+                }
+            },
             package_folder_options: {
                 options: {
                     package_folder: 'test/fixtures/package_folder_option',

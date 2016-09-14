@@ -556,7 +556,7 @@ invokeTaskTests.testUnexpectedSuccess = function(test) {
         }
     };
     gruntMock.execute(invokeTask.getHandler, harnessParams);
-}
+};
 
 invokeTaskTests.testExpectedFailure = function(test) {
     test.expect(4);
@@ -578,6 +578,6 @@ invokeTaskTests.testExpectedFailure = function(test) {
         }
     };
     gruntMock.execute(invokeTask.getHandler, harnessParams);
-}
+};
 
 module.exports = invokeTaskTests;

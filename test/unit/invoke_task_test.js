@@ -88,7 +88,7 @@ invokeTaskTests.testLambdaEnvironment = function(test) {
         callback: function(harness) {
             test.equal(harness.status, true);
             test.equal(harness.output.length, 5);
-            test.equal(harness.output[2], 'Success!  Message:');
+            test.equal(harness.output[2], 'Expected Success!  Message:');
             test.equal(harness.output[4], 'My Message');
             test.done();
         }
@@ -110,7 +110,7 @@ invokeTaskTests.testDoneSucceed = function(test) {
         callback: function(harness) {
             test.equal(harness.status, true);
             test.equal(harness.output.length, 5);
-            test.equal(harness.output[2], 'Success!  Message:');
+            test.equal(harness.output[2], 'Expected Success!  Message:');
             test.equal(harness.output[4], 'My Message');
             test.done();
         }
@@ -132,8 +132,8 @@ invokeTaskTests.testDoneWithObjectStatus = function(test) {
         callback: function(harness) {
             test.equal(harness.status, true);
             test.equal(harness.output.length, 5);
-            test.equal(harness.output[2], 'Success!  Message:');
-            test.equal(harness.output[4], '{"some":"object"}');
+            test.equal(harness.output[2], 'Expected Success!  Message:');
+            test.equal(harness.output[4], '{\n  "some": "object"\n}');
             test.done();
         }
     };
@@ -155,7 +155,7 @@ invokeTaskTests.testDoneUndefined = function(test) {
         callback: function(harness) {
             test.equal(harness.status, true);
             test.equal(harness.output.length, 5);
-            test.equal(harness.output[2], 'Success!  Message:');
+            test.equal(harness.output[2], 'Expected Success!  Message:');
             test.equal(harness.output[4], 'My Message');
             test.done();
         }
@@ -178,8 +178,8 @@ invokeTaskTests.testDoneError = function(test) {
         callback: function(harness) {
             test.equal(harness.status, false);
             test.equal(harness.output.length, 5);
-            test.equal(harness.output[2], 'Failure!  Message:');
-            test.equal(harness.output[4], '{"message":"Some Error"}');
+            test.equal(harness.output[2], 'Unexpected Failure!  Message:');
+            test.equal(harness.output[4], '{\n  "message": "Some Error"\n}');
             test.done();
         }
     };
@@ -201,8 +201,8 @@ invokeTaskTests.testFail = function(test) {
         callback: function(harness) {
             test.equal(harness.status, false);
             test.equal(harness.output.length, 5);
-            test.equal(harness.output[2], 'Failure!  Message:');
-            test.equal(harness.output[4], '{"message":"Some Error"}');
+            test.equal(harness.output[2], 'Unexpected Failure!  Message:');
+            test.equal(harness.output[4], '{\n  "message": "Some Error"\n}');
             test.done();
         }
     };
@@ -225,7 +225,7 @@ invokeTaskTests.testFileName = function(test) {
         callback: function(harness) {
             test.equal(harness.status, true);
             test.equal(harness.output.length, 5);
-            test.equal(harness.output[2], 'Success!  Message:');
+            test.equal(harness.output[2], 'Expected Success!  Message:');
             test.equal(harness.output[4], 'My Message');
             test.done();
         }
@@ -249,7 +249,7 @@ invokeTaskTests.testHandler = function(test) {
         callback: function(harness) {
             test.equal(harness.status, true);
             test.equal(harness.output.length, 5);
-            test.equal(harness.output[2], 'Success!  Message:');
+            test.equal(harness.output[2], 'Expected Success!  Message:');
             test.equal(harness.output[4], 'My Message');
             test.done();
         }
@@ -273,7 +273,7 @@ invokeTaskTests.testFileName = function(test) {
         callback: function(harness) {
             test.equal(harness.status, true);
             test.equal(harness.output.length, 5);
-            test.equal(harness.output[2], 'Success!  Message:');
+            test.equal(harness.output[2], 'Expected Success!  Message:');
             test.equal(harness.output[4], 'My Message');
             test.done();
         }
@@ -302,7 +302,7 @@ invokeTaskTests.testEvent = function(test) {
         callback: function(harness) {
             test.equal(harness.status, true);
             test.equal(harness.output.length, 5);
-            test.equal(harness.output[2], 'Success!  Message:');
+            test.equal(harness.output[2], 'Expected Success!  Message:');
             test.equal(harness.output[4], 'My Message');
             test.done();
         }
@@ -331,7 +331,7 @@ invokeTaskTests.testClientContext = function(test) {
         callback: function(harness) {
             test.equal(harness.status, true);
             test.equal(harness.output.length, 5);
-            test.equal(harness.output[2], 'Success!  Message:');
+            test.equal(harness.output[2], 'Expected Success!  Message:');
             test.equal(harness.output[4], 'My Message');
             test.done();
         }
@@ -360,7 +360,7 @@ invokeTaskTests.testIdentity = function(test) {
         callback: function(harness) {
             test.equal(harness.status, true);
             test.equal(harness.output.length, 5);
-            test.equal(harness.output[2], 'Success!  Message:');
+            test.equal(harness.output[2], 'Expected Success!  Message:');
             test.equal(harness.output[4], 'My Message');
             test.done();
         }
@@ -389,7 +389,7 @@ invokeTaskTests.testPackageFolder = function(test) {
             test.equal(process.cwd(), original);
             test.equal(harness.status, true);
             test.equal(harness.output.length, 5);
-            test.equal(harness.output[2], 'Success!  Message:');
+            test.equal(harness.output[2], 'Expected Success!  Message:');
             test.equal(harness.output[4], 'My Message');
             test.done();
         }
@@ -414,7 +414,7 @@ invokeTaskTests.testNoClientContext = function(test) {
         callback: function(harness) {
             test.equal(harness.status, true);
             test.equal(harness.output.length, 5);
-            test.equal(harness.output[2], 'Success!  Message:');
+            test.equal(harness.output[2], 'Expected Success!  Message:');
             test.equal(harness.output[4], 'My Message');
             test.done();
         }
@@ -439,7 +439,7 @@ invokeTaskTests.testNoIdentity = function(test) {
         callback: function(harness) {
             test.equal(harness.status, true);
             test.equal(harness.output.length, 5);
-            test.equal(harness.output[2], 'Success!  Message:');
+            test.equal(harness.output[2], 'Expected Success!  Message:');
             test.equal(harness.output[4], 'My Message');
             test.done();
         }
@@ -460,7 +460,7 @@ invokeTaskTests.testCallbackSucceed = function(test) {
         callback: function(harness) {
             test.equal(harness.status, true);
             test.equal(harness.output.length, 5);
-            test.equal(harness.output[2], 'Success!  Message:');
+            test.equal(harness.output[2], 'Expected Success!  Message:');
             test.equal(harness.output[4], 'My Message');
             test.done();
         }
@@ -482,8 +482,8 @@ invokeTaskTests.testCallbackWithObjectStatus = function(test) {
         callback: function(harness) {
             test.equal(harness.status, true);
             test.equal(harness.output.length, 5);
-            test.equal(harness.output[2], 'Success!  Message:');
-            test.equal(harness.output[4], '{"some":"object"}');
+            test.equal(harness.output[2], 'Expected Success!  Message:');
+            test.equal(harness.output[4], '{\n  "some": "object"\n}');
             test.done();
         }
     };
@@ -505,7 +505,7 @@ invokeTaskTests.testCallbackUndefined = function(test) {
         callback: function(harness) {
             test.equal(harness.status, true);
             test.equal(harness.output.length, 5);
-            test.equal(harness.output[2], 'Success!  Message:');
+            test.equal(harness.output[2], 'Expected Success!  Message:');
             test.equal(harness.output[4], 'My Message');
             test.done();
         }
@@ -528,13 +528,56 @@ invokeTaskTests.testCallbackError = function(test) {
         callback: function(harness) {
             test.equal(harness.status, false);
             test.equal(harness.output.length, 5);
-            test.equal(harness.output[2], 'Failure!  Message:');
-            test.equal(harness.output[4], '{"message":"Some Error"}');
+            test.equal(harness.output[2], 'Unexpected Failure!  Message:');
+            test.equal(harness.output[4], '{\n  "message": "Some Error"\n}');
             test.done();
         }
     };
     gruntMock.execute(invokeTask.getHandler, harnessParams);
 };
 
+invokeTaskTests.testUnexpectedSuccess = function(test) {
+    test.expect(4);
+
+    setLambdaFunction(function(event, context, callback) {
+        callback(null, 'My message');
+    });
+
+    var invokeTask = require('../../utils/invoke_task');
+
+    var harnessParams = {
+        options: {expect_fail: true},
+        callback: function(harness) {
+            test.equal(harness.status, false);
+            test.equal(harness.output.length, 5);
+            test.equal(harness.output[2], 'Unexpected Success!  Message:');
+            test.equal(harness.output[4], 'My message');
+            test.done();
+        }
+    };
+    gruntMock.execute(invokeTask.getHandler, harnessParams);
+}
+
+invokeTaskTests.testExpectedFailure = function(test) {
+    test.expect(4);
+
+    setLambdaFunction(function(event, context, callback) {
+        callback({message: 'Some Error'}, 'My message');
+    });
+
+    var invokeTask = require('../../utils/invoke_task');
+
+    var harnessParams = {
+        options: {expect_fail: true},
+        callback: function(harness) {
+            test.equal(harness.status, true);
+            test.equal(harness.output.length, 5);
+            test.equal(harness.output[2], 'Expected Failure!  Message:');
+            test.equal(harness.output[4], '{\n  "message": "Some Error"\n}');
+            test.done();
+        }
+    };
+    gruntMock.execute(invokeTask.getHandler, harnessParams);
+}
 
 module.exports = invokeTaskTests;

@@ -75,10 +75,9 @@ invokeTask.getHandler = function (grunt) {
                     process.chdir(cwd);
                 }
                 grunt.log.writeln("");
-                var header = (options.expect_fail ? "Unexpected" : "Expected") + " Success!  Message:"
-                grunt.log.writeln(header);
-                grunt.log.writeln(grunt.repeat(header.length, "-"));
-                var msg = (typeof(result) === 'object') ? JSON.stringify(result, 2) : result;
+                grunt.log.writeln((options.expect_fail ? "Unexpected" : "Expected") + " Success!  Message:");
+                grunt.log.writeln("-----------------------------");
+                var msg = (typeof(result) === 'object') ? JSON.stringify(result, null, 2) : result;
                 grunt.log.writeln((typeof(result) !== 'undefined') ? msg : "Successful!");
                 done(true && !options.expect_fail);
             },
@@ -87,10 +86,9 @@ invokeTask.getHandler = function (grunt) {
                     process.chdir(cwd);
                 }
                 grunt.log.writeln("");
-                var header = (options.expect_fail ? "Expected" : "Unexpected") + " Failure!  Message:"
-                grunt.log.writeln(header);
-                grunt.log.writeln(grunt.repeat(header.length, "-"));
-                var msg = (typeof(error) === 'object') ? JSON.stringify(error, 2) : error;
+                grunt.log.writeln((options.expect_fail ? "Expected" : "Unexpected") + " Failure!  Message:");
+                grunt.log.writeln("-----------------------------");
+                var msg = (typeof(error) === 'object') ? JSON.stringify(error, null, 2) : error;
                 grunt.log.writeln((typeof(error) !== 'undefined') ? msg : "Error not provided.");
                 done(false || options.expect_fail);
             },

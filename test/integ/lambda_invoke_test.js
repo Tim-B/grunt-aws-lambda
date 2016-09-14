@@ -74,6 +74,34 @@ exports.lambda_invoke = {
             test.done();
         });
     },
+    expected_failure_options: function (test) {
+        test.expect(1);
+
+        grunt.util.spawn({
+            grunt: true,
+            args: ['lambda_invoke:expected_failure_options', '--no-color']
+        }, function (err, result, code) {
+
+            var expected = getNormalizedFile('test/expected/expected_failure_options');
+            var actual = grunt.util.normalizelf(result.stdout);
+            test.equal(actual, expected);
+            test.done();
+        });
+    },
+    unexpected_success_options: function (test) {
+        test.expect(1);
+
+        grunt.util.spawn({
+            grunt: true,
+            args: ['lambda_invoke:unexpected_success_options', '--no-color']
+        }, function (err, result, code) {
+
+            var expected = getNormalizedFile('test/expected/unexpected_success_options');
+            var actual = grunt.util.normalizelf(result.stdout);
+            test.equal(actual, expected);
+            test.done();
+        });
+    },
     package_folder_options: function (test) {
         test.expect(2);
 
@@ -85,9 +113,9 @@ exports.lambda_invoke = {
             var cwd = process.cwd();
 
             // test cwd inside the function
-            var expected_cwd = 'Running "lambda_invoke:package_folder_options" (lambda_invoke) task\n\n\nSuccess!  Message:\n------------------\n' +
+            var expected_cwd = grunt.util.normalizelf('Running "lambda_invoke:package_folder_options" (lambda_invoke) task\n\n\nExpected Success!  Message:\n-----------------------------\n' +
               path.join(cwd, 'test/fixtures/package_folder_option') +
-              '\n\nDone, without errors.';
+              '\n\nDone, without errors.');
               
             var actual_cwd = grunt.util.normalizelf(result.stdout);
             test.equal(actual_cwd, expected_cwd);

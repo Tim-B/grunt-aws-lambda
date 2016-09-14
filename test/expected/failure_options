@@ -4,8 +4,8 @@ value1 = value1
 value2 = value2
 value3 = value3
 
-Failure!  Message:
-------------------
+Unexpected Failure!  Message:
+-----------------------------
 Hello World
 Warning: Task "lambda_invoke:failure_options" failed. Use --force to continue.
 

@@ -1,0 +1,12 @@
+Running "lambda_invoke:unexpected_success_options" (lambda_invoke) task
+
+value1 = value1
+value2 = value2
+value3 = value3
+
+Unexpected Success!  Message:
+-----------------------------
+Hello World
+Warning: Task "lambda_invoke:unexpected_success_options" failed. Use --force to continue.
+
+Aborted due to warnings.

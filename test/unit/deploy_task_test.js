@@ -40,6 +40,7 @@ var deployTaskTest = {};
 
 var awsSDKMock,
     lambdaAPIMock,
+    s3APIMock,
     defaultGruntConfig,
     proxyAgentMock;
 
@@ -70,6 +71,14 @@ deployTaskTest.setUp = function(done) {
         updateAlias: sinon.stub().callsArgWithAsync(1, null, {})
     };
 
+    s3APIMock = {
+        ManagedUpload : function(params){
+            return {
+                send : sinon.stub(),
+            }
+        }
+    };
+
     awsSDKMock = {
         SharedIniFileCredentials: sinon.stub(),
         EC2MetadataCredentials: sinon.stub(),
@@ -80,7 +89,8 @@ deployTaskTest.setUp = function(done) {
         },
         Lambda: function(params) {
             return lambdaAPIMock;
-        }
+        },
+        S3: s3APIMock
     };
     
     proxyAgentMock = sinon.spy();

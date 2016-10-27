@@ -327,6 +327,31 @@ grunt.initConfig({
 You could then run `grunt lambda_package lambda_deploy` and it'll automatically create the package and deploy it without
  having to specify a package name.
 
+##### options.deploy_mode
+Type: `String`
+Default value: `zip`
+
+Can be `zip` or `s3`. Determines how the code will be uploaded to lambda - via direct upload or via S3. For larger archives,
+S3 may be more suitable.
+
+##### options.S3bucketName
+Type: `String`
+Default value: `null`
+
+Mandatory if `options.deploy_mode='s3'`. S3 bucket to upload code archive to.
+
+##### options.S3Prefix
+Type: `String`
+Default value: ``
+
+Used only for `options.deploy_mode='s3'`. S3 bucket prefix to be used when uploading code archive. 
+
+##### options.S3MultiUploadPartSize
+Type: `String`
+Default value `5mb`
+
+For larger archives, determines chunk size for s3 multi-upload. Minimum value is '5mb'. 
+
 ##### options.profile
 Type: `String`
 Default value: `null`

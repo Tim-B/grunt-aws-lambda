@@ -29,7 +29,8 @@ packageTask.getHandler = function (grunt) {
             'include_time': true,
             'include_version': true,
             'package_folder': './',
-            'include_files': []
+            'include_files': [],
+            'archive_name': null
         });
 
         var pkg = JSON.parse(fs.readFileSync(path.resolve(options.package_folder + '/package.json'), "utf8"));
@@ -43,7 +44,10 @@ packageTask.getHandler = function (grunt) {
             time_string = dateFacade.getFormattedTimestamp(new Date());
         }
 
-        var archive_name = pkg.name;
+        var archive_name = options.archive_name;
+        if(!archive_name) {
+            archive_name = pkg.name;
+        }
 
         if (options.include_version) {
             archive_name += '_' + pkg.version.replace(/\./g, '-');

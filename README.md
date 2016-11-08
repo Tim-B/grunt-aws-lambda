@@ -200,6 +200,12 @@ Default value: `dist`
 
 The folder where the complete zip files should be saved relative to the Gruntfile.
 
+##### options.archive_name
+Type: `String`
+Default value: `null`
+
+The name of the output archive name (before time and/or version is added), if null package.json name property will be used.
+
 #### Usage Examples
 
 ##### Default Options

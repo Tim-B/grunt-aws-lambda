@@ -447,6 +447,31 @@ invokeTaskTests.testNoFunctionName = function(test) {
     gruntMock.execute(invokeTask.getHandler, harnessParams);
 };
 
+invokeTaskTests.testNoFunctionVersion = function(test) {
+    test.expect(5);
+
+    setLambdaFunction(function(event, context) {
+        var defaultFunctionVersion = 1;
+        test.equal(context.functionVersion, defaultFunctionVersion);
+        context.done(null, 'My Message');
+    });
+
+    var invokeTask = require('../../utils/invoke_task');
+
+    var harnessParams = {
+        options: {
+        },
+        callback: function(harness) {
+            test.equal(harness.status, true);
+            test.equal(harness.output.length, 5);
+            test.equal(harness.output[2], 'Success!  Message:');
+            test.equal(harness.output[4], 'My Message');
+            test.done();
+        }
+    };
+    gruntMock.execute(invokeTask.getHandler, harnessParams);
+};
+
 invokeTaskTests.testNoInvokedFunctionArn = function(test) {
     test.expect(5);
 

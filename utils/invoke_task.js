@@ -29,6 +29,7 @@ invokeTask.getHandler = function (grunt) {
             'client_context': 'client_context.json',
             'invokedFunctionArn': 'arn:aws:lambda:_aws_region_:_aws_account_id_:function:_lambda_function_name_',
             'functionName': '_function_name_',
+            'functionVersion': 1,
             'identity': 'identity.json'
         });
 
@@ -97,6 +98,7 @@ invokeTask.getHandler = function (grunt) {
             logStreamName: 'LAMBDA_INVOKE',
             invokedFunctionArn: options.invokedFunctionArn,
             functionName: options.functionName,
+            functionVersion: options.functionVersion,
             clientContext: clientContext,
             identity: identity
         };

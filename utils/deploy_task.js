@@ -14,6 +14,7 @@ var AWS = require('aws-sdk');
 var Q = require('q');
 var arnParser = require('./arn_parser');
 var dateFacade = require('./date_facade');
+var bytes = require('bytes');
 
 var deployTask = {};
 
@@ -39,18 +40,22 @@ deployTask.getHandler = function (grunt) {
             aliases: null,
             enablePackageVersionAlias: false,
             subnetIds: null,
-            securityGroupIds: null
+            securityGroupIds: null,
+            deploy_mode: 'zip',
+            S3bucketName: null,
+            S3Prefix: '',
+            S3MultiUploadPartSize: '5mb'
         });
-	
+
         if (options.profile !== null) {
             var credentials = new AWS.SharedIniFileCredentials({profile: options.profile});
             AWS.config.credentials = credentials;
         }
 
         //Adding proxy if exists
-        if(process.env.https_proxy !== undefined) {
+        if (process.env.https_proxy !== undefined) {
             AWS.config.update({
-                httpOptions: { agent: proxy(process.env.https_proxy) }
+                httpOptions: {agent: proxy(process.env.https_proxy)}
             });
         }
 
@@ -83,6 +88,12 @@ deployTask.getHandler = function (grunt) {
         var package_version = grunt.config.get('lambda_deploy.' + this.target + '.version');
         var package_name = grunt.config.get('lambda_deploy.' + this.target + '.package_name');
         var archive_name = grunt.config.get('lambda_deploy.' + this.target + '.archive_name');
+        var deploy_mode = grunt.config.get('lambda_deploy.' + this.target + '.deploy_mode');
+        var s3_bucket_name = grunt.config.get('lambda_deploy.' + this.target + '.S3bucketName');
+        var s3_prefix = grunt.config.get('lambda_deploy.' + this.target + '.S3Prefix') || '';
+        var s3_part_size = grunt.config.get('lambda_deploy.' + this.target + '.S3MultiUploadPartSize') || '5mb';
+        var is_s3_upload = deploy_mode == 's3';
+        var s3_key = is_s3_upload ? s3_prefix + path.basename(deploy_package) : undefined;
 
         if (deploy_arn === null && deploy_function === null) {
             grunt.fail.warn('You must specify either an arn or a function name.');
@@ -150,10 +161,10 @@ deployTask.getHandler = function (grunt) {
             }
 
             if (options.subnetIds !== null && options.securityGroupIds !== null) {
-               configParams.VpcConfig = {
-                 SubnetIds : options.subnetIds,
-                 SecurityGroupIds : options.securityGroupIds
-               };
+                configParams.VpcConfig = {
+                    SubnetIds: options.subnetIds,
+                    SecurityGroupIds: options.securityGroupIds
+                };
             }
 
             var updateConfig = function (func_name, func_options) {
@@ -248,6 +259,46 @@ deployTask.getHandler = function (grunt) {
                 }
             };
 
+            var uploadPackageToS3 = function (package_data) {
+                var upload_params = {
+                        Bucket: s3_bucket_name,
+                        Key: s3_key,
+                        Body: package_data
+                    },
+                    managed_upload = new AWS.S3.ManagedUpload({params: upload_params, partSize: bytes(s3_part_size)}),
+                    deferred = Q.defer();
+
+                if (is_s3_upload) {
+                    managed_upload.send(function (err) {
+                        if (err) {
+                            grunt.fail.warn('S3 Upload failed: ' + err);
+                            deferred.reject();
+                        }
+
+                        grunt.log.writeln('S3 Upload success');
+                        deferred.resolve();
+                    });
+                } else {
+                    deferred.resolve();
+                }
+
+                return deferred.promise;
+            };
+
+            var updateFunctionCode = function (code_params) {
+                var deferred = Q.defer();
+                lambda.updateFunctionCode(code_params, function (err, data) {
+                    if (err) {
+                        grunt.fail.warn('Package upload failed, check you have lambda:UpdateFunctionCode permissions and that your package is not too big to upload.');
+                        deferred.reject();
+                    }
+
+                    grunt.log.writeln('Package deployed.');
+                    deferred.resolve();
+                });
+                return deferred.promise;
+            };
+
             grunt.log.writeln('Uploading...');
             fs.readFile(deploy_package, function (err, data) {
                 if (err) {
@@ -255,31 +306,44 @@ deployTask.getHandler = function (grunt) {
                         'location is correct, and that you have already created the package using lambda_package.');
                 }
 
-                var codeParams = {
-                    FunctionName: deploy_function,
-                    ZipFile: data
-                };
+                var code_params;
 
-                lambda.updateFunctionCode(codeParams, function (err, data) {
-                    if (err) {
-                        grunt.fail.warn('Package upload failed, check you have lambda:UpdateFunctionCode permissions and that your package is not too big to upload.');
-                    }
+                if (is_s3_upload) {
+                    code_params = {
+                        FunctionName: deploy_function,
+                        S3Bucket: s3_bucket_name,
+                        S3Key: s3_key
+                    };
+                } else {
+                    code_params = {
+                        FunctionName: deploy_function,
+                        ZipFile: data
+                    };
+                }
 
-                    grunt.log.writeln('Package deployed.');
-
+                uploadPackageToS3(data).then(function () {
+                    return updateFunctionCode(code_params);
+                }).then(function () {
                     updateConfig(deploy_function, configParams)
-                        .then(function () {return createVersion(deploy_function);})
-                        .then(function () {return setAliases(deploy_function);})
-                        .then(function () {return setPackageVersionAlias(deploy_function);})
+                        .then(function () {
+                            return createVersion(deploy_function);
+                        })
+                        .then(function () {
+                            return setAliases(deploy_function);
+                        })
+                        .then(function () {
+                            return setPackageVersionAlias(deploy_function);
+                        })
                         .then(function () {
                             done(true);
                         }).catch(function (err) {
-                            grunt.fail.warn('Uncaught exception: ' + err.message);
-                        });
+                        grunt.fail.warn('Uncaught exception: ' + err.message);
+                    });
                 });
             });
         });
     };
-};
+}
+
 
 module.exports = deployTask;

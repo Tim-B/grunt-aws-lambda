@@ -134,214 +134,212 @@ deployTask.getHandler = function (grunt) {
 
         lambda.getFunction({FunctionName: deploy_function}, function (err, data) {
 
-            if (err) {
-                if (err.statusCode === 404) {
-                    grunt.fail.warn('Unable to find lambda function ' + deploy_function + ', verify the lambda function name and AWS region are correct.');
-                } else {
-                    grunt.log.error('AWS API request failed with ' + err.statusCode + ' - ' + err);
-                    grunt.fail.warn('Check your AWS credentials, region and permissions are correct.');
-                }
-            }
-
-            var current = data.Configuration;
-            var configParams = {};
-            var version = '$LATEST';
-
-
-            if (options.timeout !== null) {
-                configParams.Timeout = options.timeout;
-            }
-
-            if (options.memory !== null) {
-                configParams.MemorySize = options.memory;
-            }
-
-            if (options.handler !== null) {
-                configParams.Handler = options.handler;
-            }
-
-            if (options.subnetIds !== null && options.securityGroupIds !== null) {
-                configParams.VpcConfig = {
-                    SubnetIds: options.subnetIds,
-                    SecurityGroupIds: options.securityGroupIds
-                };
-            }
-
-            var updateConfig = function (func_name, func_options) {
-                var deferred = Q.defer();
-                if (Object.keys(func_options).length > 0) {
-                    func_options.FunctionName = func_name;
-                    lambda.updateFunctionConfiguration(func_options, function (err, data) {
-                        if (err) {
-                            grunt.fail.warn('Could not update config, check that values and permissions are valid');
-                            deferred.reject();
-                        } else {
-                            grunt.log.writeln('Config updated.');
-                            deferred.resolve();
-                        }
-                    });
-                } else {
-                    grunt.log.writeln('No config updates to make.');
-                    deferred.resolve();
-                }
-                return deferred.promise;
-            };
-
-            var createVersion = function (func_name) {
-                var deferred = Q.defer();
-                if (options.enableVersioning) {
-                    lambda.publishVersion({FunctionName: func_name, Description: getDeploymentDescription()}, function (err, data) {
-                        if (err) {
-                            grunt.fail.warn('Publishing version for function ' + func_name + ' failed with message ' + err.message);
-                            deferred.reject();
-                        } else {
-                            version = data.Version;
-                            grunt.log.writeln('Version ' + version + ' published.');
-                            deferred.resolve();
-                        }
-                    });
-                } else {
-                    deferred.resolve();
-                }
-
-                return deferred.promise;
-            };
-
-            var createOrUpdateAlias = function (func_name, set_alias) {
-                var deferred = Q.defer();
-
-                var params = {
-                    FunctionName: func_name,
-                    Name: set_alias
-                };
-
-
-                lambda.getAlias(params, function (err, data) {
-                    params.FunctionVersion = version;
-                    params.Description = getDeploymentDescription();
-                    var aliasFunction = 'updateAlias';
-                    if (err) {
-                        if (err.statusCode === 404) {
-                            aliasFunction = 'createAlias';
-                        } else {
-                            grunt.fail.warn('Listing aliases for ' + func_name + ' failed with message ' + err.message);
-                            deferred.reject();
-                            return;
-                        }
+                if (err) {
+                    if (err.statusCode === 404) {
+                        grunt.fail.warn('Unable to find lambda function ' + deploy_function + ', verify the lambda function name and AWS region are correct.');
+                    } else {
+                        grunt.log.error('AWS API request failed with ' + err.statusCode + ' - ' + err);
+                        grunt.fail.warn('Check your AWS credentials, region and permissions are correct.');
                     }
-                    lambda[aliasFunction](params, function (err, data) {
+                }
+
+                var current = data.Configuration;
+                var configParams = {};
+                var version = '$LATEST';
+
+
+                if (options.timeout !== null) {
+                    configParams.Timeout = options.timeout;
+                }
+
+                if (options.memory !== null) {
+                    configParams.MemorySize = options.memory;
+                }
+
+                if (options.handler !== null) {
+                    configParams.Handler = options.handler;
+                }
+
+                if (options.subnetIds !== null && options.securityGroupIds !== null) {
+                    configParams.VpcConfig = {
+                        SubnetIds: options.subnetIds,
+                        SecurityGroupIds: options.securityGroupIds
+                    };
+                }
+
+                var updateConfig = function (func_name, func_options) {
+                    var deferred = Q.defer();
+                    if (Object.keys(func_options).length > 0) {
+                        func_options.FunctionName = func_name;
+                        lambda.updateFunctionConfiguration(func_options, function (err, data) {
+                            if (err) {
+                                grunt.fail.warn('Could not update config, check that values and permissions are valid');
+                                deferred.reject();
+                            } else {
+                                grunt.log.writeln('Config updated.');
+                                deferred.resolve();
+                            }
+                        });
+                    } else {
+                        grunt.log.writeln('No config updates to make.');
+                        deferred.resolve();
+                    }
+                    return deferred.promise;
+                };
+
+                var createVersion = function (func_name) {
+                    var deferred = Q.defer();
+                    if (options.enableVersioning) {
+                        lambda.publishVersion({FunctionName: func_name, Description: getDeploymentDescription()}, function (err, data) {
+                            if (err) {
+                                grunt.fail.warn('Publishing version for function ' + func_name + ' failed with message ' + err.message);
+                                deferred.reject();
+                            } else {
+                                version = data.Version;
+                                grunt.log.writeln('Version ' + version + ' published.');
+                                deferred.resolve();
+                            }
+                        });
+                    } else {
+                        deferred.resolve();
+                    }
+
+                    return deferred.promise;
+                };
+
+                var createOrUpdateAlias = function (func_name, set_alias) {
+                    var deferred = Q.defer();
+
+                    var params = {
+                        FunctionName: func_name,
+                        Name: set_alias
+                    };
+
+
+                    lambda.getAlias(params, function (err, data) {
+                        params.FunctionVersion = version;
+                        params.Description = getDeploymentDescription();
+                        var aliasFunction = 'updateAlias';
                         if (err) {
-                            grunt.fail.warn(aliasFunction + ' for ' + func_name + ' failed with message ' + err.message);
-                            deferred.reject();
-                        } else {
-                            grunt.log.writeln('Alias ' + set_alias + ' updated pointing to version ' + version + '.');
+                            if (err.statusCode === 404) {
+                                aliasFunction = 'createAlias';
+                            } else {
+                                grunt.fail.warn('Listing aliases for ' + func_name + ' failed with message ' + err.message);
+                                deferred.reject();
+                                return;
+                            }
+                        }
+                        lambda[aliasFunction](params, function (err, data) {
+                            if (err) {
+                                grunt.fail.warn(aliasFunction + ' for ' + func_name + ' failed with message ' + err.message);
+                                deferred.reject();
+                            } else {
+                                grunt.log.writeln('Alias ' + set_alias + ' updated pointing to version ' + version + '.');
+                                deferred.resolve();
+                            }
+                        });
+                    });
+
+                    return deferred.promise;
+                };
+
+                var setAliases = function (func_name) {
+                    if (options.aliases) {
+                        var promises = [];
+                        options.aliases.forEach(function (alias) {
+                            promises.push(createOrUpdateAlias(func_name, alias));
+                        });
+                        return Q.all(promises);
+                    }
+                };
+
+                var setPackageVersionAlias = function (func_name) {
+                    if (options.enablePackageVersionAlias && package_version) {
+                        return createOrUpdateAlias(func_name, package_version.replace(/\./g, '-'));
+                    }
+                };
+
+                var uploadPackageToS3 = function (package_data) {
+                    var upload_params = {
+                            Bucket: s3_bucket_name,
+                            Key: s3_key,
+                            Body: package_data
+                        },
+                        managed_upload = new AWS.S3.ManagedUpload({params: upload_params, partSize: bytes(s3_part_size)}),
+                        deferred = Q.defer();
+
+                    if (is_s3_upload) {
+                        managed_upload.send(function (err) {
+                            if (err) {
+                                grunt.fail.warn('S3 Upload failed: ' + err);
+                                deferred.reject();
+                            }
+
+                            grunt.log.writeln('S3 Upload success');
                             deferred.resolve();
-                        }
-                    });
-                });
+                        });
+                    } else {
+                        deferred.resolve();
+                    }
 
-                return deferred.promise;
-            };
+                    return deferred.promise;
+                };
 
-            var setAliases = function (func_name) {
-                if (options.aliases) {
-                    var promises = [];
-                    options.aliases.forEach(function (alias) {
-                        promises.push(createOrUpdateAlias(func_name, alias));
-                    });
-                    return Q.all(promises);
-                }
-            };
-
-            var setPackageVersionAlias = function (func_name) {
-                if (options.enablePackageVersionAlias && package_version) {
-                    return createOrUpdateAlias(func_name, package_version.replace(/\./g, '-'));
-                }
-            };
-
-            var uploadPackageToS3 = function (package_data) {
-                var upload_params = {
-                        Bucket: s3_bucket_name,
-                        Key: s3_key,
-                        Body: package_data
-                    },
-                    managed_upload = new AWS.S3.ManagedUpload({params: upload_params, partSize: bytes(s3_part_size)}),
-                    deferred = Q.defer();
-
-                if (is_s3_upload) {
-                    managed_upload.send(function (err) {
+                var updateFunctionCode = function (code_params) {
+                    var deferred = Q.defer();
+                    lambda.updateFunctionCode(code_params, function (err, data) {
                         if (err) {
-                            grunt.fail.warn('S3 Upload failed: ' + err);
+                            grunt.fail.warn('Package upload failed, check you have lambda:UpdateFunctionCode permissions and that your package is not too big to upload.');
                             deferred.reject();
                         }
 
-                        grunt.log.writeln('S3 Upload success');
+                        grunt.log.writeln('Package deployed.');
                         deferred.resolve();
                     });
-                } else {
-                    deferred.resolve();
-                }
+                    return deferred.promise;
+                };
 
-                return deferred.promise;
-            };
-
-            var updateFunctionCode = function (code_params) {
-                var deferred = Q.defer();
-                lambda.updateFunctionCode(code_params, function (err, data) {
+                grunt.log.writeln('Uploading...');
+                fs.readFile(deploy_package, function (err, data) {
                     if (err) {
-                        grunt.fail.warn('Package upload failed, check you have lambda:UpdateFunctionCode permissions and that your package is not too big to upload.');
-                        deferred.reject();
+                        grunt.fail.warn('Could not read package file (' + deploy_package + '), verify the lambda package ' +
+                            'location is correct, and that you have already created the package using lambda_package.');
                     }
 
-                    grunt.log.writeln('Package deployed.');
-                    deferred.resolve();
-                });
-                return deferred.promise;
-            };
+                    var code_params;
 
-            grunt.log.writeln('Uploading...');
-            fs.readFile(deploy_package, function (err, data) {
-                if (err) {
-                    grunt.fail.warn('Could not read package file (' + deploy_package + '), verify the lambda package ' +
-                        'location is correct, and that you have already created the package using lambda_package.');
-                }
+                    if (is_s3_upload) {
+                        code_params = {
+                            FunctionName: deploy_function,
+                            S3Bucket: s3_bucket_name,
+                            S3Key: s3_key
+                        };
+                    } else {
+                        code_params = {
+                            FunctionName: deploy_function,
+                            ZipFile: data
+                        };
+                    }
 
-                var code_params;
-
-                if (is_s3_upload) {
-                    code_params = {
-                        FunctionName: deploy_function,
-                        S3Bucket: s3_bucket_name,
-                        S3Key: s3_key
-                    };
-                } else {
-                    code_params = {
-                        FunctionName: deploy_function,
-                        ZipFile: data
-                    };
-                }
-
-                uploadPackageToS3(data).then(function () {
-                    return updateFunctionCode(code_params);
-                }).then(function () {
-                    updateConfig(deploy_function, configParams)
-                        .then(function () {
-                            return createVersion(deploy_function);
-                        })
-                        .then(function () {
-                            return setAliases(deploy_function);
-                        })
-                        .then(function () {
-                            return setPackageVersionAlias(deploy_function);
-                        })
-                        .then(function () {
-                            done(true);
-                        }).catch(function (err) {
+                    uploadPackageToS3(data).then(function () {
+                        return updateFunctionCode(code_params);
+                    }).then(function () {
+                        return updateConfig(deploy_function, configParams);
+                    }).then(function () {
+                        return createVersion(deploy_function);
+                    }).then(function () {
+                        return setAliases(deploy_function);
+                    }).then(function () {
+                        return setPackageVersionAlias(deploy_function);
+                    }).then(function () {
+                        done(true);
+                    }).catch(function (err) {
                         grunt.fail.warn('Uncaught exception: ' + err.message);
                     });
+
                 });
-            });
-        });
+            }
+        );
     };
 }
 

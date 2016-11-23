@@ -151,6 +151,7 @@ deployTask.getHandler = function (grunt) {
             }
 
             if (options.environmentVariables !== null) {
+                configParams.Environment = {
                   Variables: options.environmentVariables
                 };
             }

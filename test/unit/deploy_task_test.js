@@ -365,6 +365,36 @@ deployTaskTest.testVpcConfig = function(test) {
     gruntMock.execute(deployTask.getHandler, harnessParams);
 };
 
+deployTaskTest.testEnvironmentVariables = function(test) {
+    test.expect(4);
+
+    var deployTask = require('../../utils/deploy_task');
+
+    var harnessParams = {
+        options: {
+            environmentVariables: {
+              "key-1": "value-1",
+              "key-2": "value-2"
+            }
+        },
+        config: defaultGruntConfig,
+        callback: function(harness) {
+            test.equal(harness.status, true);
+            test.equal(harness.output.length, 3);
+            test.equal(harness.output[2], 'Config updated.');
+
+            test.ok(lambdaAPIMock.updateFunctionConfiguration.calledWithMatch({Environment: {
+              Variables: {
+                "key-1": "value-1",
+                "key-2": "value-2"
+              }
+            }}));
+            test.done();
+        }
+    };
+    gruntMock.execute(deployTask.getHandler, harnessParams);
+};
+
 deployTaskTest.testHandler = function(test) {
     test.expect(4);
 

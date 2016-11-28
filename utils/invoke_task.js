@@ -27,7 +27,8 @@ invokeTask.getHandler = function (grunt) {
             'file_name': 'index.js',
             'event': 'event.json',
             'client_context': 'client_context.json',
-            'identity': 'identity.json'
+            'identity': 'identity.json',
+            'env_variables': null
         });
 
         grunt.log.writeln("");
@@ -35,6 +36,14 @@ invokeTask.getHandler = function (grunt) {
         var done = this.async();
 
         var clientContext = null;
+
+        if(options.env_variables) {
+            for(var variable in options.env_variables) {
+                if(options.env_variables.hasOwnProperty(variable)) {
+                    process.env[variable] = options.env_variables[variable];
+                }
+            }
+        }
 
         //since clientContext should be optional, skip if doesn't exist
         try {

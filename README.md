@@ -94,6 +94,12 @@ Default value: `event.json`
 
 Name of the .json file containing your test event relative to your Gruntfile.
 
+##### options.env_variables
+Type: `Object`
+Default value: `null`
+
+A object that will be added as environment variables (process.env) when running task.
+
 #### Usage Examples
 
 ##### Default Options

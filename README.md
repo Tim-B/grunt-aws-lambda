@@ -352,6 +352,12 @@ Default value: `null`
 
 If you wish to use hardcoded AWS credentials you should specify the Secret Access Key here
 
+##### options.sessionToken
+Type: `String`
+Default value: `null`
+
+If you wish to use hardcoded AWS credentials and you need to specify session token. This is an optional AWS session token. Usually you will need just `accessKeyId` and `secretAccessKey`.
+
 ##### options.credentialsJSON
 Type: `String`
 Default value: `null`

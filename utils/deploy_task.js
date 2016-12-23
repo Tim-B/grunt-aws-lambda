@@ -30,6 +30,7 @@ deployTask.getHandler = function (grunt) {
             RoleArn: null,
             accessKeyId: null,
             secretAccessKey: null,
+            sessionToken: null,
             credentialsJSON: null,
             region: 'us-east-1',
             timeout: null,
@@ -64,7 +65,16 @@ deployTask.getHandler = function (grunt) {
         }
 
         if (options.accessKeyId !== null && options.secretAccessKey !== null) {
-            AWS.config.update({accessKeyId: options.accessKeyId, secretAccessKey: options.secretAccessKey});
+            var sdkCredentials = {
+                accessKeyId: options.accessKeyId,
+                secretAccessKey: options.secretAccessKey
+            };
+
+            if (options.sessionToken !== null) {
+                sdkCredentials.sessionToken = options.sessionToken;
+            }
+
+            AWS.config.update(sdkCredentials);
         }
 
         if (options.credentialsJSON !== null) {

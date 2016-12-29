@@ -92,7 +92,7 @@ deployTask.getHandler = function (grunt) {
         var s3_bucket_name = grunt.config.get('lambda_deploy.' + this.target + '.S3bucketName');
         var s3_prefix = grunt.config.get('lambda_deploy.' + this.target + '.S3Prefix') || '';
         var s3_part_size = grunt.config.get('lambda_deploy.' + this.target + '.S3MultiUploadPartSize') || '5mb';
-        var is_s3_upload = deploy_mode == 's3';
+        var is_s3_upload = deploy_mode === 's3';
         var s3_key = is_s3_upload ? s3_prefix + path.basename(deploy_package) : undefined;
 
         if (deploy_arn === null && deploy_function === null) {
@@ -109,7 +109,7 @@ deployTask.getHandler = function (grunt) {
 
         var done = this.async();
 
-        options.apiVersion = '2015-03-31'
+        options.apiVersion = '2015-03-31';
         var lambda = new AWS.Lambda(options);
 
         var getDeploymentDescription = function () {
@@ -340,7 +340,7 @@ deployTask.getHandler = function (grunt) {
             }
         );
     };
-}
+};
 
 
 module.exports = deployTask;

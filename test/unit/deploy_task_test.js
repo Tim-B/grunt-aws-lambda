@@ -75,7 +75,7 @@ deployTaskTest.setUp = function(done) {
         ManagedUpload : function(params){
             return {
                 send : sinon.stub(),
-            }
+            };
         }
     };
 
@@ -92,7 +92,7 @@ deployTaskTest.setUp = function(done) {
         },
         S3: s3APIMock
     };
-    
+
     proxyAgentMock = sinon.spy();
 
     fsMock.reset();
@@ -101,7 +101,7 @@ deployTaskTest.setUp = function(done) {
     fsMock.setFileContent('some-package.zip', 'abc123');
 
     mockery.registerMock('aws-sdk', awsSDKMock);
-    
+
     mockery.registerMock('proxy-agent', proxyAgentMock);
 
     var dateFacadeMock = {

@@ -1,55 +1,56 @@
 {
-    "name": "grunt-aws-lambda",
-    "description": "A grunt plugin to help develop AWS Lambda functions.",
-    "version": "0.13.0",
-    "homepage": "https://github.com/Tim-B/grunt-aws-lambda",
-    "author": {
-        "name": "Tim-B",
-        "email": "tim@galacticcode.com"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git://github.com/Tim-B/grunt-aws-lambda.git"
-    },
-    "bugs": {
-        "url": "https://github.com/Tim-B/grunt-aws-lambda/issues"
-    },
-    "licenses": [
-        {
-            "type": "MIT",
-            "url": "https://github.com/Tim-B/grunt-aws-lambda/blob/master/LICENSE-MIT"
-        }
-    ],
-    "engines": {
-        "node": ">= 0.8.0"
-    },
-    "scripts": {
-        "test": "grunt"
-    },
-    "dependencies": {
-        "temporary": "~0.0.8",
-        "archiver": "~0.14.4",
-        "mkdirp": "~0.5.0",
-        "rimraf": "~2.2.8",
-        "glob": "~4.3.0",
-        "aws-sdk": "~2.2.32",
-	    "proxy-agent": "latest",
-        "npm": "^2.10.0",
-        "q": "^1.4.1"
-    },
-    "devDependencies": {
-        "grunt-contrib-jshint": "^0.9.2",
-        "grunt-contrib-clean": "^0.5.0",
-        "grunt-contrib-nodeunit": "^0.3.3",
-        "mockery": "^1.4.0",
-        "grunt": "~0.4.5",
-        "adm-zip": "~0.4.4",
-        "sinon": "^1.17.3"
-    },
-    "peerDependencies": {
-        "grunt": ">=0.4.0"
-    },
-    "keywords": [
-        "gruntplugin"
-    ]
+  "name": "grunt-aws-lambda",
+  "description": "A grunt plugin to help develop AWS Lambda functions.",
+  "version": "0.13.0",
+  "homepage": "https://github.com/Tim-B/grunt-aws-lambda",
+  "author": {
+    "name": "Tim-B",
+    "email": "tim@galacticcode.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Tim-B/grunt-aws-lambda.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Tim-B/grunt-aws-lambda/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/Tim-B/grunt-aws-lambda/blob/master/LICENSE-MIT"
+    }
+  ],
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "scripts": {
+    "test": "grunt"
+  },
+  "dependencies": {
+    "archiver": "~0.14.4",
+    "aws-sdk": "~2.2.32",
+    "bytes": "^2.4.0",
+    "glob": "~4.3.0",
+    "mkdirp": "~0.5.0",
+    "npm": "^2.10.0",
+    "proxy-agent": "latest",
+    "q": "^1.4.1",
+    "rimraf": "~2.2.8",
+    "temporary": "~0.0.8"
+  },
+  "devDependencies": {
+    "grunt-contrib-jshint": "^0.9.2",
+    "grunt-contrib-clean": "^0.5.0",
+    "grunt-contrib-nodeunit": "^0.3.3",
+    "mockery": "^1.4.0",
+    "grunt": "~0.4.5",
+    "adm-zip": "~0.4.4",
+    "sinon": "^1.17.3"
+  },
+  "peerDependencies": {
+    "grunt": ">=0.4.0"
+  },
+  "keywords": [
+    "gruntplugin"
+  ]
 }

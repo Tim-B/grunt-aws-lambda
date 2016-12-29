@@ -103,6 +103,11 @@ invokeTask.getHandler = function (grunt) {
 
         var lambda = invokeTask.loadFunction(options.file_name);
         var event = JSON.parse(fs.readFileSync(path.resolve(options.event), "utf8"));
+
+        //set environment variables
+        process.env['LAMBDA_TASK_ROOT'] = process.env['PWD'];
+
+        //invoke process
         lambda[options.handler](event, context, callback);
     };
 };

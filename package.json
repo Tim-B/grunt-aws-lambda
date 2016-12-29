@@ -1,7 +1,7 @@
 {
-    "name": "toshke-grunt-aws-lambda",
+    "name": "grunt-aws-lambda",
     "description": "A grunt plugin to help develop AWS Lambda functions.",
-    "version": "0.13.3",
+    "version": "0.13.0",
     "homepage": "https://github.com/Tim-B/grunt-aws-lambda",
     "author": {
         "name": "Tim-B",
@@ -9,7 +9,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git://github.com/toshke/grunt-aws-lambda.git"
+        "url": "git://github.com/Tim-B/grunt-aws-lambda.git"
     },
     "bugs": {
         "url": "https://github.com/Tim-B/grunt-aws-lambda/issues"
@@ -35,8 +35,7 @@
         "aws-sdk": "~2.2.32",
 	    "proxy-agent": "latest",
         "npm": "^2.10.0",
-        "q": "^1.4.1",
-        "bytes": "^2.4.0"
+        "q": "^1.4.1"
     },
     "devDependencies": {
         "grunt-contrib-jshint": "^0.9.2",

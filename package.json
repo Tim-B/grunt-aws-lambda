@@ -1,7 +1,7 @@
 {
     "name": "toshke-grunt-aws-lambda",
     "description": "A grunt plugin to help develop AWS Lambda functions.",
-    "version": "0.13.0",
+    "version": "0.13.1",
     "homepage": "https://github.com/Tim-B/grunt-aws-lambda",
     "author": {
         "name": "Tim-B",

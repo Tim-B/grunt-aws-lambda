@@ -109,9 +109,8 @@ deployTask.getHandler = function (grunt) {
 
         var done = this.async();
 
-        var lambda = new AWS.Lambda({
-            apiVersion: '2015-03-31'
-        });
+        options.apiVersion = '2015-03-31'
+        var lambda = new AWS.Lambda(options);
 
         var getDeploymentDescription = function () {
             var description = 'Deployed ';

@@ -83,7 +83,7 @@ deployTask.getHandler = function (grunt) {
         var package_version = grunt.config.get('lambda_deploy.' + this.target + '.version');
         var package_name = grunt.config.get('lambda_deploy.' + this.target + '.package_name');
         var archive_name = grunt.config.get('lambda_deploy.' + this.target + '.archive_name');
-        var s3_key = grunt.config.get('lambda_deploy.' + this.target + '.s3_key');
+        var s3_key_prefix = grunt.config.get('lambda_deploy.' + this.target + '.s3_key_prefix');
         var s3_bucket = grunt.config.get('lambda_deploy.' + this.target + '.s3_bucket');
 
         if (deploy_arn === null && deploy_function === null) {
@@ -272,7 +272,12 @@ deployTask.getHandler = function (grunt) {
                     });
             };
 
-            if(deploy_package){
+            if(s3_bucket){
+              codeParams.S3Key = (s3_key_prefix ? path.join(s3_key_prefix,deploy_package) : deploy_package);
+              codeParams.S3Bucket = s3_bucket;
+              lambda.updateFunctionCode(codeParams, updateFunctionCodeCb);
+
+            } else if(deploy_package){
               grunt.log.writeln('Uploading...');
               fs.readFile(deploy_package, function (err, data) {
                   if (err) {
@@ -284,10 +289,6 @@ deployTask.getHandler = function (grunt) {
 
                   lambda.updateFunctionCode(codeParams, updateFunctionCodeCb);
               });
-            } else if(s3_key && s3_bucket){
-              codeParams.S3Key = s3_key;
-              codeParams.S3Bucket = s3_key;
-              lambda.updateFunctionCode(codeParams, updateFunctionCodeCb);
             } else {
               grunt.fail.warn('At least package must be defined or S3_key and s3_bucket must be defined');
             }

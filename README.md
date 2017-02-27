@@ -296,12 +296,53 @@ On Linux based hosts you can set proxy server for deploy task by specifying stan
 E.g:
 env https_proxy=http://localhost:8080 grunt deploy
 
-##### s3_key and s3_bucket
+##### s3_bucket
+Type: `String`
 
-* s3_key : the S3Key to be used if deploying from AWS S3
-* s3_bucket : the S3Bucket to be used if deploying from AWS S3
+If the value is defined, the package is deployed from AWS Lambda.
+The is recommended for packages bigger than 10 Mo.
 
-Those are an alternative to package options
+NB: this project is not uploading the package on s3, you can use [grunt-aws-s3](https://github.com/MathieuLoutre/grunt-aws-s3) to do this.
+
+For example, your Gruntfile.js might contain the following:
+
+```javascript
+grunt.initConfig({
+    lambda_deploy: { 
+        env: {
+            arn: 'arn:aws:lambda:us-east-1:123456781234:function:my-function',
+            s3_bucket: 'my-lambda-code-bucket',
+            s3_key_prefix: 'folderName'
+        }
+    },
+    lambda_package: {
+        env: {
+            options: {}
+        }
+    },
+    aws_s3: { 
+        options: {
+        },
+        env: {
+            options: {
+                bucket: 'my-lambda-code-bucket'
+            },
+            files: [
+                {action: 'upload', expand: true, src: ['dist/**'], differential: true, dest: 'folderName'}
+            ]
+        }
+    }
+});
+grunt.loadNpmTasks('grunt-aws-s3');
+grunt.loadNpmTasks('grunt-aws-lambda');    
+grunt.registerTask('deploy', ['lambda_package', 'aws_s3', 'lambda_deploy']);
+```	
+
+##### s3_key_prefix 
+Type: `String`
+
+The S3 folder to be used if deploying from AWS S3. The resulting s3 key will be `<s3_bucket>://<s3_key_prefix>/<package>`
+If null, the package is uploaded direclty into the root of the s3 Bucket.
 
 ##### package
 Type: `String`

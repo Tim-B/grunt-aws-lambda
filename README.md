@@ -293,8 +293,15 @@ Default value: None - Required (if you havn't specified an ARN)
 
 ##### Proxy
 On Linux based hosts you can set proxy server for deploy task by specifying standard environment variable - https_proxy.
-E.g: 
+E.g:
 env https_proxy=http://localhost:8080 grunt deploy
+
+##### s3_key and s3_bucket
+
+* s3_key : the S3Key to be used if deploying from AWS S3
+* s3_bucket : the S3Bucket to be used if deploying from AWS S3
+
+Those are an alternative to package options
 
 ##### package
 Type: `String`

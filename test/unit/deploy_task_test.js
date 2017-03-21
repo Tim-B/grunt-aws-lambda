@@ -56,7 +56,8 @@ deployTaskTest.setUp = function(done) {
                 Configuration: {
                     timeout: 100,
                     MemorySize: 128,
-                    Handler: 'handler'
+                    Handler: 'handler',
+                    Runtime: 'nodejs4.3'
                 }
             }
         }),
@@ -82,7 +83,7 @@ deployTaskTest.setUp = function(done) {
             return lambdaAPIMock;
         }
     };
-    
+
     proxyAgentMock = sinon.spy();
 
     fsMock.reset();
@@ -91,7 +92,7 @@ deployTaskTest.setUp = function(done) {
     fsMock.setFileContent('some-package.zip', 'abc123');
 
     mockery.registerMock('aws-sdk', awsSDKMock);
-    
+
     mockery.registerMock('proxy-agent', proxyAgentMock);
 
     var dateFacadeMock = {
@@ -381,6 +382,28 @@ deployTaskTest.testHandler = function(test) {
             test.equal(harness.output[2], 'Config updated.');
 
             test.ok(lambdaAPIMock.updateFunctionConfiguration.calledWithMatch({Handler: 'some-handler'}));
+            test.done();
+        }
+    };
+    gruntMock.execute(deployTask.getHandler, harnessParams);
+};
+
+deployTaskTest.testRuntime = function(test) {
+    test.expect(4);
+
+    var deployTask = require('../../utils/deploy_task');
+
+    var harnessParams = {
+        options: {
+            runtime: 'some-runtime'
+        },
+        config: defaultGruntConfig,
+        callback: function(harness) {
+            test.equal(harness.status, true);
+            test.equal(harness.output.length, 3);
+            test.equal(harness.output[2], 'Config updated.');
+
+            test.ok(lambdaAPIMock.updateFunctionConfiguration.calledWithMatch({Runtime: 'some-runtime'}));
             test.done();
         }
     };

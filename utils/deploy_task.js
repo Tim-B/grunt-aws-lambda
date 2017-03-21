@@ -35,13 +35,14 @@ deployTask.getHandler = function (grunt) {
             timeout: null,
             memory: null,
             handler: null,
+            runtime: null,
             enableVersioning: false,
             aliases: null,
             enablePackageVersionAlias: false,
             subnetIds: null,
             securityGroupIds: null
         });
-	
+
         if (options.profile !== null) {
             var credentials = new AWS.SharedIniFileCredentials({profile: options.profile});
             AWS.config.credentials = credentials;
@@ -147,6 +148,10 @@ deployTask.getHandler = function (grunt) {
 
             if (options.handler !== null) {
                 configParams.Handler = options.handler;
+            }
+
+            if (options.runtime !== null) {
+                configParams.Runtime = options.runtime;
             }
 
             if (options.subnetIds !== null && options.securityGroupIds !== null) {

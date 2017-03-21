@@ -293,7 +293,7 @@ Default value: None - Required (if you havn't specified an ARN)
 
 ##### Proxy
 On Linux based hosts you can set proxy server for deploy task by specifying standard environment variable - https_proxy.
-E.g: 
+E.g:
 env https_proxy=http://localhost:8080 grunt deploy
 
 ##### package
@@ -382,6 +382,12 @@ Default value: `null`
 
 Sets the handler for your lambda function. If left null, the current setting will remain unchanged.
 
+##### options.runtime
+Type: `String`
+Default value: `null`
+
+Sets the runtime for your lambda function. If left null, the current setting will remain unchanged.
+
 ##### options.enableVersioning
 Type: `boolean`
 Default value: `false`
@@ -463,6 +469,23 @@ grunt.initConfig({
             options: {
                 timeout : 10,
                 memory: 256
+            }
+        }
+    }
+});
+```
+
+##### Updating the Node.js runtime from 0.10 to 0.43
+In this example, an existing lambda function is updated to use the new
+Node.js 4.3 runtime (replacing the 0.10 runtime which is deprecated).
+
+```js
+grunt.initConfig({
+    lambda_deploy: {
+        default: {
+            arn: 'arn:aws:lambda:us-east-1:123456781234:function:my-function',
+            options: {
+                runtime: "nodejs4.3"
             }
         }
     }

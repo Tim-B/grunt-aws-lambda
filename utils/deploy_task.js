@@ -81,7 +81,7 @@ deployTask.getHandler = function (grunt) {
         var deploy_arn = grunt.config.get('lambda_deploy.' + this.target + '.arn');
         var deploy_package = grunt.config.get('lambda_deploy.' + this.target + '.package');
         var s3_bucket = grunt.config.get('lambda_deploy.' + this.target + '.s3_bucket');
-        var s3_key = grunt.config.get('lambda_deploy.' + this.target + '.s3_key');
+        var s3_path = grunt.config.get('lambda_deploy.' + this.target + '.s3_path');
         var s3_version = grunt.config.get('lambda_deploy.' + this.target + '.s3_version');
         var package_version = grunt.config.get('lambda_deploy.' + this.target + '.version');
         var package_name = grunt.config.get('lambda_deploy.' + this.target + '.package_name');
@@ -286,7 +286,14 @@ deployTask.getHandler = function (grunt) {
                     });
                 });
             } else {
-                grunt.log.writeln([ 'Using code deployed to S3 at [', s3_bucket, '/', s3_key, '] (version: ', s3_version || 'LATEST', ')' ].join(''));
+                var s3_key = !s3_path? deploy_package:s3_path + '/' + deploy_package;
+                grunt.log.writeln([
+                    'Using code deployed to S3 at [',
+                    s3_bucket, '/', s3_key,
+                    '] (version: ',
+                    s3_version || 'LATEST',
+                    ')' ].join(''));
+
                 var codeParams = {
                     FunctionName: deploy_function,
                     S3Bucket: s3_bucket,

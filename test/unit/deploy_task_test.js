@@ -205,7 +205,7 @@ deployTaskTest.testDeployS3 = function(test) {
     var harnessParams = {
         options: { },
         config: {
-            'lambda_deploy.fake-target.function': 'my-function',
+            'lambda_deploy.fake-target.function': 'some-function',
             'lambda_deploy.fake-target.package': expectedPackage,
             'lambda_deploy.fake-target.s3_bucket': expectedS3Bucket,
             'lambda_deploy.fake-target.s3_path': expectedS3Path
@@ -248,7 +248,7 @@ deployTaskTest.testDeployS3WithoutPath = function(test) {
     var harnessParams = {
         options: { },
         config: {
-            'lambda_deploy.fake-target.function': 'my-function',
+            'lambda_deploy.fake-target.function': 'some-function',
             'lambda_deploy.fake-target.package': expectedPackage,
             'lambda_deploy.fake-target.s3_bucket': expectedS3Bucket,
             'lambda_deploy.fake-target.s3_path': expectedS3Path
@@ -294,7 +294,7 @@ deployTaskTest.testDeployS3WithVersion = function(test) {
     var harnessParams = {
         options: { },
         config: {
-            'lambda_deploy.fake-target.function': 'my-function',
+            'lambda_deploy.fake-target.function': 'some-function',
             'lambda_deploy.fake-target.package': expectedPackage,
             'lambda_deploy.fake-target.s3_bucket': expectedS3Bucket,
             'lambda_deploy.fake-target.s3_path': expectedS3Path,

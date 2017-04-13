@@ -286,7 +286,7 @@ deployTaskTest.testDeployS3WithVersion = function(test) {
         expectedS3Bucket, '/', expectedS3Key,
         '] (version: ',
         expectedS3Version,
-        'LATEST)'
+        ')'
     ].join('');
 
     var harnessParams = {

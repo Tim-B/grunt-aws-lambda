@@ -261,7 +261,7 @@ deployTask.getHandler = function (grunt) {
                     }).catch(function (err) {
                         grunt.fail.warn('Uncaught exception: ' + err.message);
                     });
-            }
+            };
 
             if(!s3_bucket) {
                 grunt.log.writeln('Uploading...');

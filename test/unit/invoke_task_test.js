@@ -422,6 +422,81 @@ invokeTaskTests.testNoClientContext = function(test) {
     gruntMock.execute(invokeTask.getHandler, harnessParams);
 };
 
+invokeTaskTests.testNoFunctionName = function(test) {
+    test.expect(5);
+
+    setLambdaFunction(function(event, context) {
+        var defaultFunctionName = '_function_name_';
+        test.equal(context.functionName, defaultFunctionName);
+        context.done(null, 'My Message');
+    });
+
+    var invokeTask = require('../../utils/invoke_task');
+
+    var harnessParams = {
+        options: {
+        },
+        callback: function(harness) {
+            test.equal(harness.status, true);
+            test.equal(harness.output.length, 5);
+            test.equal(harness.output[2], 'Success!  Message:');
+            test.equal(harness.output[4], 'My Message');
+            test.done();
+        }
+    };
+    gruntMock.execute(invokeTask.getHandler, harnessParams);
+};
+
+invokeTaskTests.testNoFunctionVersion = function(test) {
+    test.expect(5);
+
+    setLambdaFunction(function(event, context) {
+        var defaultFunctionVersion = 1;
+        test.equal(context.functionVersion, defaultFunctionVersion);
+        context.done(null, 'My Message');
+    });
+
+    var invokeTask = require('../../utils/invoke_task');
+
+    var harnessParams = {
+        options: {
+        },
+        callback: function(harness) {
+            test.equal(harness.status, true);
+            test.equal(harness.output.length, 5);
+            test.equal(harness.output[2], 'Success!  Message:');
+            test.equal(harness.output[4], 'My Message');
+            test.done();
+        }
+    };
+    gruntMock.execute(invokeTask.getHandler, harnessParams);
+};
+
+invokeTaskTests.testNoInvokedFunctionArn = function(test) {
+    test.expect(5);
+
+    setLambdaFunction(function(event, context) {
+        var defaultArn = 'arn:aws:lambda:_aws_region_:_aws_account_id_:function:_lambda_function_name_';
+        test.equal(context.invokedFunctionArn, defaultArn);
+        context.done(null, 'My Message');
+    });
+
+    var invokeTask = require('../../utils/invoke_task');
+
+    var harnessParams = {
+        options: {
+        },
+        callback: function(harness) {
+            test.equal(harness.status, true);
+            test.equal(harness.output.length, 5);
+            test.equal(harness.output[2], 'Success!  Message:');
+            test.equal(harness.output[4], 'My Message');
+            test.done();
+        }
+    };
+    gruntMock.execute(invokeTask.getHandler, harnessParams);
+};
+
 invokeTaskTests.testNoIdentity = function(test) {
     test.expect(5);
 

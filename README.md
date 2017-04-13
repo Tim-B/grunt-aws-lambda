@@ -435,6 +435,32 @@ A list of one or more security groups IDs in your VPC.
 
 If your Lambda function accesses resources in a VPC you must provide at least one security group and one subnet ID. These must belong to the same VPC
 
+##### options.s3_bucket
+Type: `String`
+Default value: `undefined`
+
+An optional S3 bucket that contains a pre uploaded package for deployment.
+
+If this property is specified, the task will attempt to load the package from the specified S3 bucket, instead of uploading it from the file system.
+
+The `package` property is used to determine the name of the file within the bucket.
+
+##### options.s3_path
+Type: `String`
+Default value: `undefined`
+
+An optional S3 path that points to the "directory" within S3 that contains the package. If omitted, the task assumes that the package has been deployed at the root of the S3 bucket.
+
+The `package` property is used to determine the name of the file within the bucket.
+
+##### options.s3_version
+Type: `String`
+Default value: `undefined`
+
+An optional S3 version id string that can be used to specifiy a specific version of the package file on s3. If omitted, the latest version of the package will be used.
+
+The `package` property is used to determine the name of the file within the bucket.
+
 #### Usage Examples
 
 ##### Default Options

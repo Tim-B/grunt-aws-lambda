@@ -80,6 +80,9 @@ deployTask.getHandler = function (grunt) {
         var deploy_function = grunt.config.get('lambda_deploy.' + this.target + '.function');
         var deploy_arn = grunt.config.get('lambda_deploy.' + this.target + '.arn');
         var deploy_package = grunt.config.get('lambda_deploy.' + this.target + '.package');
+        var s3_bucket = grunt.config.get('lambda_deploy.' + this.target + '.s3_bucket');
+        var s3_path = grunt.config.get('lambda_deploy.' + this.target + '.s3_path');
+        var s3_version = grunt.config.get('lambda_deploy.' + this.target + '.s3_version');
         var package_version = grunt.config.get('lambda_deploy.' + this.target + '.version');
         var package_name = grunt.config.get('lambda_deploy.' + this.target + '.package_name');
         var archive_name = grunt.config.get('lambda_deploy.' + this.target + '.archive_name');
@@ -248,36 +251,68 @@ deployTask.getHandler = function (grunt) {
                 }
             };
 
-            grunt.log.writeln('Uploading...');
-            fs.readFile(deploy_package, function (err, data) {
-                if (err) {
-                    grunt.fail.warn('Could not read package file (' + deploy_package + '), verify the lambda package ' +
-                        'location is correct, and that you have already created the package using lambda_package.');
-                }
+            var updateLambdaConfig = function(functionName, configParams) {
+                updateConfig(functionName, configParams)
+                    .then(function () {return createVersion(functionName);})
+                    .then(function () {return setAliases(functionName);})
+                    .then(function () {return setPackageVersionAlias(functionName);})
+                    .then(function () {
+                        done(true);
+                    }).catch(function (err) {
+                        grunt.fail.warn('Uncaught exception: ' + err.message);
+                    });
+            };
+
+            if(!s3_bucket) {
+                grunt.log.writeln('Uploading...');
+                fs.readFile(deploy_package, function (err, data) {
+                    if (err) {
+                        grunt.fail.warn('Could not read package file (' + deploy_package + '), verify the lambda package ' +
+                            'location is correct, and that you have already created the package using lambda_package.');
+                    }
+
+                    var codeParams = {
+                        FunctionName: deploy_function,
+                        ZipFile: data
+                    };
+
+                    lambda.updateFunctionCode(codeParams, function (err, data) {
+                        if (err) {
+                            grunt.fail.warn('Package upload failed, check you have lambda:UpdateFunctionCode permissions and that your package is not too big to upload.');
+                        }
+
+                        grunt.log.writeln('Package deployed.');
+                        updateLambdaConfig(deploy_function, configParams);
+                    });
+                });
+            } else {
+                var s3_key = !s3_path? deploy_package:s3_path + '/' + deploy_package;
+                grunt.log.writeln([
+                    'Using code deployed to S3 at [',
+                    s3_bucket, '/', s3_key,
+                    '] (version: ',
+                    s3_version || 'LATEST',
+                    ')' ].join(''));
 
                 var codeParams = {
                     FunctionName: deploy_function,
-                    ZipFile: data
+                    S3Bucket: s3_bucket,
+                    S3Key: s3_key
                 };
+
+                if(s3_version) {
+                    codeParams.S3ObjectVersion = s3_version;
+                }
 
                 lambda.updateFunctionCode(codeParams, function (err, data) {
                     if (err) {
-                        grunt.fail.warn('Package upload failed, check you have lambda:UpdateFunctionCode permissions and that your package is not too big to upload.');
+                        grunt.fail.warn('Package deployment failed, check you have lambda:UpdateFunctionCode permissions and that your package is not too big to upload.');
                     }
-
                     grunt.log.writeln('Package deployed.');
 
-                    updateConfig(deploy_function, configParams)
-                        .then(function () {return createVersion(deploy_function);})
-                        .then(function () {return setAliases(deploy_function);})
-                        .then(function () {return setPackageVersionAlias(deploy_function);})
-                        .then(function () {
-                            done(true);
-                        }).catch(function (err) {
-                            grunt.fail.warn('Uncaught exception: ' + err.message);
-                        });
+                    updateLambdaConfig(deploy_function, configParams);
                 });
-            });
+            }
         });
     };
 };

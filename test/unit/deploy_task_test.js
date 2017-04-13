@@ -188,6 +188,81 @@ deployTaskTest.testDeployWithoutProxy = function(test) {
     gruntMock.execute(deployTask.getHandler, harnessParams);
 };
 
+deployTaskTest.testDeployS3 = function(test) {
+    test.expect(9);
+
+    var deployTask = require('../../utils/deploy_task');
+    var expectedS3Bucket = 'my-s3-bucket';
+    var expectedS3Key = 'my-s3-key';
+    var progressMessage = `Using code deployed to S3 at [${expectedS3Bucket}/${expectedS3Key}] (version: LATEST)`;
+
+    var harnessParams = {
+        options: { },
+        config: Object.assign(defaultGruntConfig, {
+            'lambda_deploy.fake-target.package': undefined,
+            'lambda_deploy.fake-target.s3_bucket': expectedS3Bucket,
+            'lambda_deploy.fake-target.s3_key': expectedS3Key
+        }),
+        callback: function(harness) {
+            test.equal(harness.status, true);
+            test.equal(harness.output.length, 3);
+            test.equal(harness.output[0], progressMessage);
+            test.equal(harness.output[1], 'Package deployed.');
+            test.equal(harness.output[2], 'No config updates to make.');
+
+            test.ok(awsSDKMock.config.update.calledWith({region: 'us-east-1'}));
+            test.ok(lambdaAPIMock.getFunction.calledWith({FunctionName: 'some-function'}));
+            test.ok(lambdaAPIMock.updateFunctionCode.calledWith({
+                FunctionName: 'some-function',
+                S3Bucket: expectedS3Bucket,
+                S3Key: expectedS3Key
+            }));
+            test.ok(!lambdaAPIMock.updateFunctionConfiguration.called);
+            test.done();
+        }
+    };
+    gruntMock.execute(deployTask.getHandler, harnessParams);
+};
+
+deployTaskTest.testDeployS3WithVersion = function(test) {
+    test.expect(9);
+
+    var deployTask = require('../../utils/deploy_task');
+    var expectedS3Bucket = 'my-s3-bucket';
+    var expectedS3Key = 'my-s3-key';
+    var expectedS3Version = 'my-version';
+    var progressMessage = `Using code deployed to S3 at [${expectedS3Bucket}/${expectedS3Key}] (version: ${expectedS3Version})`;
+
+    var harnessParams = {
+        options: { },
+        config: Object.assign(defaultGruntConfig, {
+            'lambda_deploy.fake-target.package': undefined,
+            'lambda_deploy.fake-target.s3_bucket': expectedS3Bucket,
+            'lambda_deploy.fake-target.s3_key': expectedS3Key,
+            'lambda_deploy.fake-target.s3_version': expectedS3Version
+        }),
+        callback: function(harness) {
+            test.equal(harness.status, true);
+            test.equal(harness.output.length, 3);
+            test.equal(harness.output[0], progressMessage);
+            test.equal(harness.output[1], 'Package deployed.');
+            test.equal(harness.output[2], 'No config updates to make.');
+
+            test.ok(awsSDKMock.config.update.calledWith({region: 'us-east-1'}));
+            test.ok(lambdaAPIMock.getFunction.calledWith({FunctionName: 'some-function'}));
+            test.ok(lambdaAPIMock.updateFunctionCode.calledWith({
+                FunctionName: 'some-function',
+                S3Bucket: expectedS3Bucket,
+                S3Key: expectedS3Key,
+                S3ObjectVersion: expectedS3Version
+            }));
+            test.ok(!lambdaAPIMock.updateFunctionConfiguration.called);
+            test.done();
+        }
+    };
+    gruntMock.execute(deployTask.getHandler, harnessParams);
+};
+
 deployTaskTest.testProfile = function(test) {
     test.expect(3);
 

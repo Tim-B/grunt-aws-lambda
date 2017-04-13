@@ -204,11 +204,12 @@ deployTaskTest.testDeployS3 = function(test) {
 
     var harnessParams = {
         options: { },
-        config: Object.assign(defaultGruntConfig, {
+        config: {
+            'lambda_deploy.fake-target.function': 'my-function',
             'lambda_deploy.fake-target.package': expectedPackage,
             'lambda_deploy.fake-target.s3_bucket': expectedS3Bucket,
             'lambda_deploy.fake-target.s3_path': expectedS3Path
-        }),
+        },
         callback: function(harness) {
             test.equal(harness.status, true);
             test.equal(harness.output.length, 3);
@@ -246,11 +247,12 @@ deployTaskTest.testDeployS3WithoutPath = function(test) {
 
     var harnessParams = {
         options: { },
-        config: Object.assign(defaultGruntConfig, {
+        config: {
+            'lambda_deploy.fake-target.function': 'my-function',
             'lambda_deploy.fake-target.package': expectedPackage,
             'lambda_deploy.fake-target.s3_bucket': expectedS3Bucket,
             'lambda_deploy.fake-target.s3_path': expectedS3Path
-        }),
+        },
         callback: function(harness) {
             test.equal(harness.status, true);
             test.equal(harness.output.length, 3);
@@ -291,12 +293,13 @@ deployTaskTest.testDeployS3WithVersion = function(test) {
 
     var harnessParams = {
         options: { },
-        config: Object.assign(defaultGruntConfig, {
+        config: {
+            'lambda_deploy.fake-target.function': 'my-function',
             'lambda_deploy.fake-target.package': expectedPackage,
             'lambda_deploy.fake-target.s3_bucket': expectedS3Bucket,
             'lambda_deploy.fake-target.s3_path': expectedS3Path,
             'lambda_deploy.fake-target.s3_version': expectedS3Version
-        }),
+        },
         callback: function(harness) {
             test.equal(harness.status, true);
             test.equal(harness.output.length, 3);

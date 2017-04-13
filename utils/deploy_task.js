@@ -251,7 +251,7 @@ deployTask.getHandler = function (grunt) {
                 }
             };
 
-            const updateLambdaConfig = function(functionName, configParams) {
+            var updateLambdaConfig = function(functionName, configParams) {
                 updateConfig(functionName, configParams)
                     .then(function () {return createVersion(functionName);})
                     .then(function () {return setAliases(functionName);})

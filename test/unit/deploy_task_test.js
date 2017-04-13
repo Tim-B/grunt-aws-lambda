@@ -195,8 +195,12 @@ deployTaskTest.testDeployS3 = function(test) {
     var expectedPackage = 'my-package.zip';
     var expectedS3Bucket = 'my-s3-bucket';
     var expectedS3Path = 'my-s3-path';
-    var expectedS3Key = `${expectedS3Path}/${expectedPackage}`;
-    var progressMessage = `Using code deployed to S3 at [${expectedS3Bucket}/${expectedS3Key}] (version: LATEST)`;
+    var expectedS3Key = expectedS3Path + '/' + expectedPackage;
+    var progressMessage = [
+        'Using code deployed to S3 at [',
+        expectedS3Bucket, '/', expectedS3Key,
+        '] (version: LATEST)'
+    ].join('');
 
     var harnessParams = {
         options: { },
@@ -234,7 +238,11 @@ deployTaskTest.testDeployS3WithoutPath = function(test) {
     var expectedS3Bucket = 'my-s3-bucket';
     var expectedS3Path = '';
     var expectedS3Key = expectedPackage;
-    var progressMessage = `Using code deployed to S3 at [${expectedS3Bucket}/${expectedPackage}] (version: LATEST)`;
+    var progressMessage = [
+        'Using code deployed to S3 at [',
+        expectedS3Bucket, '/', expectedPackage,
+        '] (version: LATEST)'
+    ].join('');
 
     var harnessParams = {
         options: { },
@@ -272,8 +280,14 @@ deployTaskTest.testDeployS3WithVersion = function(test) {
     var expectedS3Bucket = 'my-s3-bucket';
     var expectedS3Path = 'my-s3-path';
     var expectedS3Version = 'my-version';
-    var expectedS3Key = `${expectedS3Path}/${expectedPackage}`;
-    var progressMessage = `Using code deployed to S3 at [${expectedS3Bucket}/${expectedS3Key}] (version: ${expectedS3Version})`;
+    var expectedS3Key = expectedS3Path + '/' + expectedPackage;
+    var progressMessage = [
+        'Using code deployed to S3 at [',
+        expectedS3Bucket, '/', expectedS3Key,
+        '] (version: ',
+        expectedS3Version,
+        'LATEST)'
+    ].join('');
 
     var harnessParams = {
         options: { },

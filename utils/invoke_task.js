@@ -87,7 +87,7 @@ invokeTask.getHandler = function (grunt) {
                 grunt.log.writeln("");
                 grunt.log.writeln("Failure!  Message:");
                 grunt.log.writeln("------------------");
-                var msg = (typeof(error) === 'object') ? JSON.stringify(error) : error;
+                var msg = (typeof(error) === 'object') ? JSON.stringify(error, ["message", "arguments", "type", "name"]) : error;
                 grunt.log.writeln((typeof(error) !== 'undefined') ? msg : "Error not provided.");
                 done(false);
             },

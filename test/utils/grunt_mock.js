@@ -11,7 +11,7 @@
 
 var gruntMock = {};
 
-var fakeGrunt = function (harness) {
+var FakeGrunt = function (harness) {
     this.log = {
         writeln: function(value) {
             harness.output.push(value);
@@ -60,7 +60,7 @@ gruntMock.execute = function(handler, params) {
         harness.config = params.config;
     }
 
-    var NewHandler = handler(new fakeGrunt(harness));
+    var NewHandler = handler(new FakeGrunt(harness));
     NewHandler.prototype.options = fakeOptions(params.options);
     NewHandler.prototype.async = fakeAsync(params.callback, harness);
     NewHandler.prototype.target = 'fake-target';

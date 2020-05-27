@@ -58,7 +58,7 @@ packageTask.getHandler = function (grunt) {
             var install_location = dir.path;
             var zip_path = install_location + '/' + archive_name + '.zip';
 
-            npm.commands.install(install_location, options.package_folder, function () {
+            npm.commands.install(install_location, [options.package_folder], function () {
 
                 var output = fs.createWriteStream(zip_path);
                 var zipArchive = archive('zip');
